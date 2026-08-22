@@ -11,7 +11,6 @@ class SiteSettingsSeeder extends Seeder
     {
         $defaults = [
             'site_name' => 'Virtual School Expo',
-            'expo_title' => 'Virtual School Expo',
             'hero_headline' => 'Discover Your Future School, All in One Place',
             'hero_description' => 'Explore interactive booths from leading schools, chat with admissions teams, and find the right fit for your child — all from the comfort of home.',
             'about_content' => "The Virtual School Expo brings together schools and prospective families in one welcoming online space. Browse booths, watch videos, review programs, and apply directly — no travel required.",

@@ -9,7 +9,7 @@
             document.documentElement.setAttribute('data-theme', 'light');
         }
     </script>
-    <title>{{ $content['expo_title'] ?? 'Virtual School Expo' }}</title>
+    <title>{{ $content['site_name'] ?? 'Virtual School Expo' }}</title>
     <meta name="description" content="{{ $content['hero_description'] ?? '' }}">
     @include('partials.favicon')
 
@@ -33,7 +33,7 @@
                     <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-500 text-sm font-bold text-white">VE</span>
                 @endif
 <span class="site-nav-title pl-3 font-display text-lg font-semibold text-white">
-    {{ $content['expo_title'] ?? 'Virtual School Expo' }}
+    {{ $content['site_name'] ?? 'Virtual School Expo' }}
 </span>            </a>
 
             <div class="hidden items-center gap-8 text-sm font-medium text-gray-200 md:flex">

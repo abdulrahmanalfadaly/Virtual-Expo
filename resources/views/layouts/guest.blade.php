@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>{{ \App\Models\SiteSetting::get('site_name', 'Virtual School Expo') }}</title>
         @include('partials.favicon')
 
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -17,13 +17,16 @@
         <div class="guest-dark min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-900">
             <div class="w-full px-6 sm:max-w-md">
                 <a href="{{ route('home') }}" class="flex items-center justify-center gap-2 text-lg font-semibold text-gray-200">
-                    @php $expoLogoPath = \App\Models\SiteSetting::get('expo_logo_path'); @endphp
+                    @php
+                        $expoLogoPath = \App\Models\SiteSetting::get('expo_logo_path');
+                        $siteName = \App\Models\SiteSetting::get('site_name', 'Virtual School Expo');
+                    @endphp
                     @if ($expoLogoPath)
                         <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($expoLogoPath) }}" alt="Logo" class="h-8 w-8 rounded-lg object-contain">
                     @else
                         <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-500 text-xs font-bold text-white">VE</span>
                     @endif
-                    Virtual School Expo
+                    {{ $siteName }}
                 </a>
             </div>
 

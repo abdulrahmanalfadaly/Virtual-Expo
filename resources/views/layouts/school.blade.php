@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'School Dashboard' }} — Virtual School Expo</title>
+    <title>{{ $title ?? 'School Dashboard' }} — {{ \App\Models\SiteSetting::get('site_name', 'Virtual School Expo') }}</title>
     @include('partials.favicon')
 
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -18,7 +18,7 @@
         <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
             @php
                 $expoLogoPath = \App\Models\SiteSetting::get('expo_logo_path');
-                $expoTitle = \App\Models\SiteSetting::get('expo_title', 'Virtual School Expo');
+                $siteName = \App\Models\SiteSetting::get('site_name', 'Virtual School Expo');
             @endphp
             <a href="{{ route('home') }}" class="flex items-center gap-2">
                 @if ($expoLogoPath)
@@ -26,7 +26,7 @@
                 @else
                     <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-500 text-sm font-bold text-white">VE</span>
                 @endif
-                <span class="pl-3 font-display text-lg font-semibold text-white">{{ $expoTitle }}</span>
+                <span class="pl-3 font-display text-lg font-semibold text-white">{{ $siteName }}</span>
             </a>
 
             <div class="hidden items-center gap-4 md:flex">

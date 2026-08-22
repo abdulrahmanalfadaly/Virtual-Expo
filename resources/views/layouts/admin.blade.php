@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'Admin' }} — Virtual School Expo</title>
+    <title>{{ $title ?? 'Admin' }} — {{ \App\Models\SiteSetting::get('site_name', 'Virtual School Expo') }}</title>
     @include('partials.favicon')
 
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -18,7 +18,18 @@
         <aside class="fixed inset-y-0 left-0 z-30 w-64 -translate-x-full bg-gray-900 text-gray-200 transition-transform lg:static lg:translate-x-0"
                :class="{ '!translate-x-0': sidebarOpen }">
             <div class="flex h-16 items-center gap-2 px-6">
-                <a href="{{ route('home') }}" class="font-semibold text-white">Virtual Expo Admin</a>
+                @php
+                    $adminLogoPath = \App\Models\SiteSetting::get('expo_logo_path');
+                    $adminSiteName = \App\Models\SiteSetting::get('site_name', 'Virtual School Expo');
+                @endphp
+                <a href="{{ route('home') }}" class="flex items-center gap-2 font-semibold text-white">
+                    @if ($adminLogoPath)
+                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($adminLogoPath) }}" alt="Logo" class="h-8 w-8 rounded-lg object-contain">
+                    @else
+                        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-500 text-xs font-bold text-white">VE</span>
+                    @endif
+                    <span>{{ $adminSiteName }}</span>
+                </a>
             </div>
             <nav class="mt-4 space-y-1 px-3 text-sm">
                 @php
@@ -28,7 +39,6 @@
                         ['route' => 'admin.applications.index', 'label' => 'Applications'],
                         ['route' => 'admin.homepage.edit', 'label' => 'Homepage Content'],
                         ['route' => 'admin.booth-settings.edit', 'label' => 'Booth Settings'],
-                        ['route' => 'admin.settings.edit', 'label' => 'General Settings'],
                         ['route' => 'admin.activity.index', 'label' => 'Activity Log'],
                     ];
                 @endphp

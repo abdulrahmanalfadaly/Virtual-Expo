@@ -20,7 +20,7 @@ class HomeController extends Controller
         return view('home', [
             'schools' => $schools,
             'content' => SiteSetting::getMany([
-                'expo_title', 'hero_headline', 'hero_description', 'about_content',
+                'hero_headline', 'hero_description', 'about_content',
                 'contact_email', 'contact_phone', 'contact_address', 'support_info',
                 'footer_text', 'expo_logo_path', 'site_name', 'site_background_path',
                 'hero_overlay_opacity',

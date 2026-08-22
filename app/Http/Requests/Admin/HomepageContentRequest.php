@@ -14,7 +14,6 @@ class HomepageContentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'expo_title' => ['required', 'string', 'max:255'],
             'hero_headline' => ['required', 'string', 'max:255'],
             'hero_description' => ['nullable', 'string', 'max:1000'],
             'hero_overlay_opacity' => ['required', 'integer', 'min:0', 'max:100'],

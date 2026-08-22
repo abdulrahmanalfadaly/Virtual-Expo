@@ -7,15 +7,12 @@ use App\Http\Requests\Admin\GeneralSettingsRequest;
 use App\Models\SiteSetting;
 use App\Services\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
 
 class SettingsController extends Controller
 {
-    public function edit(): View
+    public function edit(): RedirectResponse
     {
-        return view('admin.settings', [
-            'settings' => SiteSetting::getMany(['site_name', 'allow_registration', 'allow_applications', 'require_admin_approval']),
-        ]);
+        return redirect()->route('admin.dashboard');
     }
 
     public function update(GeneralSettingsRequest $request): RedirectResponse

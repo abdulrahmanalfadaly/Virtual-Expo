@@ -7,10 +7,6 @@
             <h2 class="text-base font-semibold text-gray-900">Branding &amp; Hero</h2>
             <div class="mt-4 grid gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Expo Title</label>
-                    <input type="text" name="expo_title" value="{{ old('expo_title', $settings['expo_title']) }}" required class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                </div>
-                <div>
                     <label class="block text-sm font-medium text-gray-700">Hero Headline</label>
                     <input type="text" name="hero_headline" value="{{ old('hero_headline', $settings['hero_headline']) }}" required class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                 </div>
