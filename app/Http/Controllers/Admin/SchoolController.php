@@ -121,7 +121,7 @@ class SchoolController extends Controller
 
         ActivityLogger::log('admin.school_updated', "Admin updated {$school->name}", $school);
 
-        return redirect()->route('admin.schools.show', $school)->with('status', 'School updated.');
+        return redirect()->route('admin.schools.edit', $school)->with('status', 'School updated.');
     }
 
     public function publish(School $school): RedirectResponse

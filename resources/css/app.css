@@ -124,6 +124,51 @@
     border-radius: 3px;
 }
 
+/* Force the guest/login layout to always render dark, regardless of the
+   visitor's browser/OS color-scheme preference (the shared Breeze form
+   components below only carry `dark:` variants, so without this override
+   they'd fall back to their light styling on light-preference browsers). */
+.guest-dark .text-gray-600,
+.guest-dark .text-gray-700,
+.guest-dark .text-gray-900 {
+    color: #d1d5db !important;
+}
+
+.guest-dark .hover\:text-gray-900:hover,
+.guest-dark .hover\:text-gray-100:hover {
+    color: #ffffff !important;
+}
+
+.guest-dark input[type="text"],
+.guest-dark input[type="email"],
+.guest-dark input[type="password"] {
+    background-color: #111827 !important;
+    color: #e5e7eb !important;
+    border-color: #374151 !important;
+}
+
+.guest-dark input[type="checkbox"] {
+    background-color: #111827 !important;
+    border-color: #374151 !important;
+}
+
+.guest-dark .text-red-600 {
+    color: #f87171 !important;
+}
+
+.guest-dark .text-green-600 {
+    color: #4ade80 !important;
+}
+
+.guest-dark button[type="submit"] {
+    background-color: #e5e7eb !important;
+    color: #1f2937 !important;
+}
+
+.guest-dark button[type="submit"]:hover {
+    background-color: #ffffff !important;
+}
+
 .modal-panel {
     background-color: rgba(255, 255, 255, var(--modal-alpha, 0.9));
 }
