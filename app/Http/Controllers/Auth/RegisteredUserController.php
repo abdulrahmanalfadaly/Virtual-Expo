@@ -39,27 +39,43 @@ class RegisteredUserController extends Controller
             abort(403, 'Registration is currently closed.');
         }
 
-        $request->validate([
+        $data = $request->validate([
             'school_name' => ['required', 'string', 'max:255'],
             'contact_person' => ['required', 'string', 'max:255'],
+            'logo' => ['nullable', 'image', 'max:2048'],
+            'full_description' => ['nullable', 'string', 'max:5000'],
+            'video_url' => ['nullable', 'url', 'max:255'],
+            'zoom_url' => ['nullable', 'url', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $user = DB::transaction(function () use ($request) {
+        $requiresApproval = SiteSetting::get('require_admin_approval', false);
+
+        $user = DB::transaction(function () use ($request, $data, $requiresApproval) {
             $user = User::create([
-                'name' => $request->contact_person,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
+                'name' => $data['contact_person'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
                 'role' => 'school',
             ]);
 
+            $logoPath = $request->hasFile('logo')
+                ? $request->file('logo')->store('logos', 'public')
+                : null;
+
             School::create([
                 'user_id' => $user->id,
-                'name' => $request->school_name,
-                'slug' => School::uniqueSlug($request->school_name),
-                'contact_person' => $request->contact_person,
-                'contact_email' => $request->email,
+                'name' => $data['school_name'],
+                'slug' => School::uniqueSlug($data['school_name']),
+                'contact_person' => $data['contact_person'],
+                'contact_email' => $data['email'],
+                'logo_path' => $logoPath,
+                'full_description' => $data['full_description'] ?? null,
+                'video_url' => $data['video_url'] ?? null,
+                'zoom_url' => $data['zoom_url'] ?? null,
+                'is_published' => ! $requiresApproval,
+                'approved_at' => $requiresApproval ? null : now(),
             ]);
 
             return $user;
@@ -71,7 +87,7 @@ class RegisteredUserController extends Controller
 
         ActivityLogger::log(
             'school.registered',
-            "New school registered: {$user->school->name}",
+            "New school registered: {$user->school->name}".($requiresApproval ? ' (pending admin approval)' : ''),
             $user->school,
             [],
             route('admin.schools.show', $user->school)

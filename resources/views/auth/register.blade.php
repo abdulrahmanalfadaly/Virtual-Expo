@@ -1,7 +1,7 @@
 <x-guest-layout>
     <h2 class="mb-6 text-center text-xl font-semibold text-gray-900 dark:text-white">Register Your School</h2>
 
-    <form method="POST" action="{{ route('register') }}">
+    <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data">
         @csrf
 
         <div>
@@ -14,6 +14,30 @@
             <x-input-label for="contact_person" :value="__('Contact Person Name')" />
             <x-text-input id="contact_person" class="block mt-1 w-full" type="text" name="contact_person" :value="old('contact_person')" required />
             <x-input-error :messages="$errors->get('contact_person')" class="mt-2" />
+        </div>
+
+        <div class="mt-4">
+            <x-input-label for="logo" :value="__('School Logo')" />
+            <input id="logo" type="file" name="logo" accept="image/*" class="mt-1 block w-full text-sm text-gray-300 file:mr-3 file:rounded-md file:border-0 file:bg-gray-700 file:px-3 file:py-1.5 file:text-sm file:text-gray-100">
+            <x-input-error :messages="$errors->get('logo')" class="mt-2" />
+        </div>
+
+        <div class="mt-4">
+            <x-input-label for="full_description" :value="__('About')" />
+            <textarea id="full_description" name="full_description" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-300">{{ old('full_description') }}</textarea>
+            <x-input-error :messages="$errors->get('full_description')" class="mt-2" />
+        </div>
+
+        <div class="mt-4">
+            <x-input-label for="video_url" :value="__('YouTube Video URL')" />
+            <x-text-input id="video_url" class="block mt-1 w-full" type="url" name="video_url" :value="old('video_url')" placeholder="https://youtube.com/..." />
+            <x-input-error :messages="$errors->get('video_url')" class="mt-2" />
+        </div>
+
+        <div class="mt-4">
+            <x-input-label for="zoom_url" :value="__('Zoom / Meeting URL')" />
+            <x-text-input id="zoom_url" class="block mt-1 w-full" type="url" name="zoom_url" :value="old('zoom_url')" />
+            <x-input-error :messages="$errors->get('zoom_url')" class="mt-2" />
         </div>
 
         <div class="mt-4">

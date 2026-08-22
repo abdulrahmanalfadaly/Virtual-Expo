@@ -17,6 +17,7 @@ class GeneralSettingsRequest extends FormRequest
             'site_name' => ['required', 'string', 'max:255'],
             'allow_registration' => ['nullable', 'boolean'],
             'allow_applications' => ['nullable', 'boolean'],
+            'require_admin_approval' => ['nullable', 'boolean'],
         ];
     }
 }

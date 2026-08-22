@@ -49,7 +49,10 @@ class BoothController extends Controller
     {
         $school = $request->user()->school;
 
-        $school->update(['is_published' => true]);
+        $school->update([
+            'is_published' => true,
+            'approved_at' => $school->approved_at ?? now(),
+        ]);
 
         ActivityLogger::log(
             'school.published',

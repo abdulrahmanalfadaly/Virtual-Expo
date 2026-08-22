@@ -126,7 +126,10 @@ class SchoolController extends Controller
 
     public function publish(School $school): RedirectResponse
     {
-        $school->update(['is_published' => true]);
+        $school->update([
+            'is_published' => true,
+            'approved_at' => $school->approved_at ?? now(),
+        ]);
         ActivityLogger::log('admin.school_published', "Admin published {$school->name}", $school);
 
         return back()->with('status', 'School published.');

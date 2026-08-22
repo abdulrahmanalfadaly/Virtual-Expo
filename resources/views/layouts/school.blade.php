@@ -29,7 +29,7 @@
                 <span class="pl-3 font-display text-lg font-semibold text-white">{{ $expoTitle }}</span>
             </a>
 
-            <div class="flex items-center gap-4">
+            <div class="hidden items-center gap-4 md:flex">
                 <a href="{{ route('home') }}" class="text-sm font-medium text-gray-200 transition hover:text-white">
                     Home
                 </a>
@@ -45,6 +45,12 @@
                     {{ auth()->user()->school->name ?? '' }}
                 </a>
             </div>
+        </div>
+
+        <div class="flex justify-center gap-6 border-t border-white/10 py-2 text-xs font-medium text-gray-300 md:hidden">
+            <a href="{{ route('home') }}">Home</a>
+            <a href="{{ route('school.dashboard') }}">Dashboard</a>
+            <a href="{{ route('profile.edit') }}">Account</a>
         </div>
     </header>
 

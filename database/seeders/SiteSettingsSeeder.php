@@ -25,6 +25,7 @@ class SiteSettingsSeeder extends Seeder
             'hero_overlay_opacity' => 70,
             'allow_registration' => true,
             'allow_applications' => true,
+            'require_admin_approval' => false,
             'booth_template_path' => null,
             'booth_logo_x' => 50,
             'booth_logo_y' => 71.5,

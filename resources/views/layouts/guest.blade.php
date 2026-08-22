@@ -15,8 +15,8 @@
     </head>
     <body class="font-sans text-gray-900 antialiased">
         <div class="guest-dark min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-900">
-            <div>
-                <a href="{{ route('home') }}" class="flex items-center gap-2 text-lg font-semibold text-gray-200">
+            <div class="w-full px-6 sm:max-w-md">
+                <a href="{{ route('home') }}" class="flex items-center justify-center gap-2 text-lg font-semibold text-gray-200">
                     @php $expoLogoPath = \App\Models\SiteSetting::get('expo_logo_path'); @endphp
                     @if ($expoLogoPath)
                         <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($expoLogoPath) }}" alt="Logo" class="h-8 w-8 rounded-lg object-contain">

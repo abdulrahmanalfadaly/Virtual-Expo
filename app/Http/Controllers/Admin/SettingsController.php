@@ -14,7 +14,7 @@ class SettingsController extends Controller
     public function edit(): View
     {
         return view('admin.settings', [
-            'settings' => SiteSetting::getMany(['site_name', 'allow_registration', 'allow_applications']),
+            'settings' => SiteSetting::getMany(['site_name', 'allow_registration', 'allow_applications', 'require_admin_approval']),
         ]);
     }
 
@@ -24,6 +24,7 @@ class SettingsController extends Controller
             'site_name' => $request->validated('site_name'),
             'allow_registration' => $request->boolean('allow_registration'),
             'allow_applications' => $request->boolean('allow_applications'),
+            'require_admin_approval' => $request->boolean('require_admin_approval'),
         ]);
 
         ActivityLogger::log('admin.settings_updated', 'Admin updated general site settings');

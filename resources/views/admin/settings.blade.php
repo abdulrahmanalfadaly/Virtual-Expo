@@ -24,6 +24,14 @@
                 </div>
                 <input type="checkbox" name="allow_applications" value="1" @checked($settings['allow_applications']) class="h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
             </div>
+
+            <div class="mt-6 flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-900">Require Admin Approval</p>
+                    <p class="text-xs text-gray-500">When enabled, new schools stay unpublished until an admin manually publishes them. When disabled, new schools publish automatically on signup.</p>
+                </div>
+                <input type="checkbox" name="require_admin_approval" value="1" @checked($settings['require_admin_approval']) class="h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+            </div>
         </div>
 
         <button class="rounded-full bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white shadow hover:bg-indigo-500">Save Settings</button>

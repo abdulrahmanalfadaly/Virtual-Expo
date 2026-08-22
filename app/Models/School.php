@@ -25,6 +25,7 @@ class School extends Model
         'address',
         'zoom_url',
         'is_published',
+        'approved_at',
         'status',
     ];
 
@@ -32,6 +33,7 @@ class School extends Model
     {
         return [
             'is_published' => 'boolean',
+            'approved_at' => 'datetime',
         ];
     }
 
@@ -63,6 +65,15 @@ class School extends Model
     public function isVisible(): bool
     {
         return $this->is_published && $this->isActive();
+    }
+
+    public function boothStatusLabel(): string
+    {
+        if ($this->is_published) {
+            return 'Published';
+        }
+
+        return $this->approved_at ? 'Unpublished' : 'Pending Approval';
     }
 
     public function logoUrl(): ?string
