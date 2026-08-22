@@ -1,0 +1,169 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+}
+
+.font-display {
+    font-family: 'Fraunces', ui-serif, Georgia, serif;
+}
+
+.hero-gradient {
+    position: relative;
+}
+
+.hero-gradient::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    opacity: var(--hero-overlay-opacity, 0.7);
+    background:
+        radial-gradient(circle at 15% 20%, rgba(99, 102, 241, 0.25), transparent 45%),
+        radial-gradient(circle at 85% 15%, rgba(236, 72, 153, 0.18), transparent 45%),
+        radial-gradient(circle at 50% 100%, rgba(37, 99, 235, 0.25), transparent 55%),
+        linear-gradient(135deg, #0b1120 0%, #111827 55%, #1e1b4b 100%);
+}
+
+.site-fixed-bg {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.booth-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--booth-cols, 2), var(--booth-col-width, 26.75rem));
+    gap: var(--booth-gap, 2.5rem);
+    width: fit-content;
+    max-width: 100%;
+}
+
+@media (max-width: 639px) {
+    .booth-grid {
+        grid-template-columns: minmax(0, 1fr);
+        width: 100%;
+        max-width: 26.75rem;
+    }
+}
+
+.booth-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1089 / 1444;
+    background: none;
+    transition: transform 0.25s ease;
+}
+
+.booth-frame:hover {
+    transform: translateY(-6px);
+}
+
+.booth-template-img,
+.booth-template-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+.booth-logo {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    object-fit: contain;
+    pointer-events: none;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+}
+
+.booth-logo-placeholder {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 0.5rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.booth-name-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.booth-name-text {
+    font-family: inherit;
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(100, 100, 100, 0.4);
+    border-radius: 3px;
+}
+
+.modal-panel {
+    background-color: rgba(255, 255, 255, var(--modal-alpha, 0.9));
+}
+
+@media (prefers-color-scheme: dark) {
+    .modal-panel {
+        background-color: rgba(17, 24, 39, var(--modal-alpha, 0.9));
+    }
+}
+
+[data-theme="light"] .site-nav {
+    background-color: rgba(255, 255, 255, 0.7);
+    border-bottom-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .site-nav-title,
+[data-theme="light"] .site-nav-link {
+    color: #1f2937;
+}
+
+[data-theme="light"] .site-nav-link:hover {
+    color: #111827;
+}
+
+[data-theme="light"] .site-schools-panel {
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+[data-theme="light"] .site-schools-heading {
+    color: #111827;
+}
+
+[data-theme="light"] .site-gradient-text {
+    background-image: linear-gradient(to right, #4f46e5, #db2777);
+}
+
+[data-theme="light"] .site-schools-subtitle {
+    color: #4b5563;
+}
+
+[data-theme="light"] .site-schools-empty {
+    color: #6b7280;
+}
