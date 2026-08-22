@@ -152,6 +152,17 @@
     border-color: #374151 !important;
 }
 
+/* Chrome/Safari paint autofilled fields with their own light background via
+   an internal UA layer that plain background-color can't override — the
+   box-shadow inset trick is the standard workaround. */
+.guest-dark input:-webkit-autofill,
+.guest-dark input:-webkit-autofill:hover,
+.guest-dark input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0px 1000px #111827 inset !important;
+    -webkit-text-fill-color: #e5e7eb !important;
+    caret-color: #e5e7eb;
+}
+
 .guest-dark .text-red-600 {
     color: #f87171 !important;
 }
