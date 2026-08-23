@@ -15,6 +15,7 @@ class UpdateSchoolRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'school_type' => ['required', 'in:national,international,online'],
             'logo' => ['nullable', 'image', 'max:2048'],
             'full_description' => ['nullable', 'string', 'max:5000'],
             'video_url' => ['nullable', 'url', 'max:255'],

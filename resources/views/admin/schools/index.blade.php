@@ -22,6 +22,7 @@
             <thead class="bg-gray-50 text-left text-xs font-semibold uppercase text-gray-500">
                 <tr>
                     <th class="px-4 py-3">Name</th>
+                    <th class="px-4 py-3">Type</th>
                     <th class="px-4 py-3">Contact</th>
                     <th class="px-4 py-3">Status</th>
                     <th class="px-4 py-3">Registered</th>
@@ -34,6 +35,7 @@
                         <td class="px-4 py-3 font-medium text-gray-900">
                             <a href="{{ route('admin.schools.show', $school) }}" class="hover:underline">{{ $school->name }}</a>
                         </td>
+                        <td class="px-4 py-3 text-gray-600">{{ $school->schoolTypeLabel() }}</td>
                         <td class="px-4 py-3 text-gray-600">{{ $school->user->email ?? '—' }}</td>
                         <td class="px-4 py-3">
                             @if ($school->status === 'suspended')
@@ -81,7 +83,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="5" class="px-4 py-6 text-center text-gray-500">No schools found.</td></tr>
+                    <tr><td colspan="6" class="px-4 py-6 text-center text-gray-500">No schools found.</td></tr>
                 @endforelse
             </tbody>
         </table>

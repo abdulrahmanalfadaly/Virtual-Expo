@@ -42,6 +42,7 @@ class RegisteredUserController extends Controller
         $data = $request->validate([
             'school_name' => ['required', 'string', 'max:255'],
             'contact_person' => ['required', 'string', 'max:255'],
+            'school_type' => ['required', 'in:national,international,online'],
             'logo' => ['nullable', 'image', 'max:2048'],
             'full_description' => ['nullable', 'string', 'max:5000'],
             'video_url' => ['nullable', 'url', 'max:255'],
@@ -67,6 +68,7 @@ class RegisteredUserController extends Controller
             School::create([
                 'user_id' => $user->id,
                 'name' => $data['school_name'],
+                'school_type' => $data['school_type'],
                 'slug' => School::uniqueSlug($data['school_name']),
                 'contact_person' => $data['contact_person'],
                 'contact_email' => $data['email'],

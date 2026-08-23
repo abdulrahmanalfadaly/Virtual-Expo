@@ -17,6 +17,17 @@
         </div>
 
         <div class="mt-4">
+            <x-input-label for="school_type" :value="__('School Type')" />
+            <select id="school_type" name="school_type" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-300">
+                <option value="" disabled selected>Select a type</option>
+                <option value="national" @selected(old('school_type') === 'national')>National</option>
+                <option value="international" @selected(old('school_type') === 'international')>International</option>
+                <option value="online" @selected(old('school_type') === 'online')>Online</option>
+            </select>
+            <x-input-error :messages="$errors->get('school_type')" class="mt-2" />
+        </div>
+
+        <div class="mt-4">
             <x-input-label for="logo" :value="__('School Logo')" />
             <input id="logo" type="file" name="logo" accept="image/*" class="mt-1 block w-full text-sm text-gray-300 file:mr-3 file:rounded-md file:border-0 file:bg-gray-700 file:px-3 file:py-1.5 file:text-sm file:text-gray-100">
             <x-input-error :messages="$errors->get('logo')" class="mt-2" />

@@ -15,6 +15,16 @@
                     @error('contact_person') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                 </div>
                 <div>
+                    <label class="block text-sm font-medium text-gray-700">School Type</label>
+                    <select name="school_type" required class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <option value="" disabled @selected(! old('school_type'))>Select a type</option>
+                        <option value="national" @selected(old('school_type') === 'national')>National</option>
+                        <option value="international" @selected(old('school_type') === 'international')>International</option>
+                        <option value="online" @selected(old('school_type') === 'online')>Online</option>
+                    </select>
+                    @error('school_type') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                </div>
+                <div>
                     <label class="block text-sm font-medium text-gray-700">Login Email</label>
                     <input type="email" name="email" value="{{ old('email') }}" required class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                     @error('email') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror

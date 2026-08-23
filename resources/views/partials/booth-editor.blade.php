@@ -16,6 +16,16 @@
             </div>
 
             <div class="mt-4">
+                <label class="block text-sm font-medium text-gray-700">School Type</label>
+                <select name="school_type" required class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    <option value="" disabled @selected(! old('school_type', $school->school_type))>Select a type</option>
+                    <option value="national" @selected(old('school_type', $school->school_type) === 'national')>National</option>
+                    <option value="international" @selected(old('school_type', $school->school_type) === 'international')>International</option>
+                    <option value="online" @selected(old('school_type', $school->school_type) === 'online')>Online</option>
+                </select>
+            </div>
+
+            <div class="mt-4">
                 <label class="block text-sm font-medium text-gray-700">Logo</label>
                 @if ($school->logo_path)
                     <div class="mt-1 mb-2">

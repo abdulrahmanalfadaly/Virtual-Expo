@@ -55,7 +55,7 @@
 
     <div class="mt-8">
         <h2 class="text-base font-semibold text-gray-900">General Settings</h2>
-        <form method="POST" action="{{ route('admin.settings.update') }}" class="mt-4 max-w-xl space-y-6">
+        <form method="POST" action="{{ route('admin.settings.update') }}" enctype="multipart/form-data" class="mt-4 max-w-xl space-y-6">
             @csrf
             @method('PUT')
 
@@ -63,6 +63,15 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Site / Expo Name</label>
                     <input type="text" name="site_name" value="{{ old('site_name', $settings['site_name']) }}" required class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                </div>
+
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700">Link Preview Image</label>
+                    <p class="text-xs text-gray-400">Shown when your site's link is shared on WhatsApp, iMessage, social media, etc. Recommended size: 1200×630.</p>
+                    @if (! empty($settings['link_preview_image_path']))
+                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($settings['link_preview_image_path']) }}" class="mt-2 h-24 w-full max-w-xs rounded-lg object-cover ring-1 ring-gray-200">
+                    @endif
+                    <input type="file" name="link_preview_image" accept="image/*" class="mt-2 w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                 </div>
 
                 <div class="mt-6 flex items-center justify-between">

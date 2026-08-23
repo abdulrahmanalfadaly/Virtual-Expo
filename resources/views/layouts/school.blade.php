@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? 'School Dashboard' }} — {{ \App\Models\SiteSetting::get('site_name', 'Virtual School Expo') }}</title>
     @include('partials.favicon')
+    @include('partials.social-meta')
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700|fraunces:500,600,700&display=swap" rel="stylesheet" />

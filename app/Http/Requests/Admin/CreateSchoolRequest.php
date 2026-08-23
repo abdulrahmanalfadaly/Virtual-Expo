@@ -17,6 +17,7 @@ class CreateSchoolRequest extends FormRequest
         return [
             'school_name' => ['required', 'string', 'max:255'],
             'contact_person' => ['required', 'string', 'max:255'],
+            'school_type' => ['required', 'in:national,international,online'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ];

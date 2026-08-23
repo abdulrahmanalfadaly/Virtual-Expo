@@ -12,6 +12,7 @@
     <title>{{ $content['site_name'] ?? 'Virtual School Expo' }}</title>
     <meta name="description" content="{{ $content['hero_description'] ?? '' }}">
     @include('partials.favicon')
+    @include('partials.social-meta')
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700|fraunces:500,600,700&display=swap" rel="stylesheet" />

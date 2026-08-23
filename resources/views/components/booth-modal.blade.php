@@ -25,7 +25,14 @@
                         <span class="text-2xl font-bold text-gray-400">{{ $initials }}</span>
                     @endif
                 </div>
-                <h3 class="font-display text-2xl font-semibold text-gray-900 dark:text-white sm:text-4xl">{{ $school->name }}</h3>
+                <div>
+                    <h3 class="font-display text-2xl font-semibold text-gray-900 dark:text-white sm:text-4xl">{{ $school->name }}</h3>
+                    @if ($school->school_type)
+                        <span class="mt-2 inline-block rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300">
+                            {{ $school->schoolTypeLabel() }}
+                        </span>
+                    @endif
+                </div>
             </div>
 
             <div class="px-6 pt-8 pb-12 sm:px-10 sm:pt-10 sm:pb-16">

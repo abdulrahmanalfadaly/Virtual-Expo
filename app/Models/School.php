@@ -12,6 +12,7 @@ class School extends Model
     protected $fillable = [
         'user_id',
         'name',
+        'school_type',
         'slug',
         'contact_person',
         'logo_path',
@@ -74,6 +75,16 @@ class School extends Model
         }
 
         return $this->approved_at ? 'Unpublished' : 'Pending Approval';
+    }
+
+    public function schoolTypeLabel(): string
+    {
+        return match ($this->school_type) {
+            'national' => 'National',
+            'international' => 'International',
+            'online' => 'Online',
+            default => '—',
+        };
     }
 
     public function logoUrl(): ?string

@@ -18,6 +18,7 @@ class GeneralSettingsRequest extends FormRequest
             'allow_registration' => ['nullable', 'boolean'],
             'allow_applications' => ['nullable', 'boolean'],
             'require_admin_approval' => ['nullable', 'boolean'],
+            'link_preview_image' => ['nullable', 'image', 'max:2048'],
         ];
     }
 }

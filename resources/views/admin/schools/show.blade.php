@@ -14,6 +14,7 @@
             <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
                 <h3 class="text-sm font-semibold uppercase tracking-wide text-gray-500">Profile</h3>
                 <dl class="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+                    <div><dt class="text-gray-500">School Type</dt><dd class="text-gray-900">{{ $school->schoolTypeLabel() }}</dd></div>
                     <div><dt class="text-gray-500">Contact Person</dt><dd class="text-gray-900">{{ $school->contact_person ?: '—' }}</dd></div>
                     <div><dt class="text-gray-500">Contact Email</dt><dd class="text-gray-900">{{ $school->contact_email ?: '—' }}</dd></div>
                     <div><dt class="text-gray-500">Phone</dt><dd class="text-gray-900">{{ $school->contact_phone ?: '—' }}</dd></div>
