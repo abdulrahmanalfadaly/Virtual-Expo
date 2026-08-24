@@ -109,7 +109,6 @@ class School extends Model
         $fields = [
             $this->name,
             $this->logo_path,
-            $this->short_description,
             $this->full_description,
             $this->contact_email,
         ];

@@ -143,10 +143,16 @@
 .guest-dark input[type="email"],
 .guest-dark input[type="password"],
 .guest-dark input[type="url"],
-.guest-dark textarea {
+.guest-dark textarea,
+.guest-dark select {
     background-color: #111827 !important;
     color: #e5e7eb !important;
     border-color: #374151 !important;
+}
+
+.guest-dark select option {
+    background-color: #111827;
+    color: #e5e7eb;
 }
 
 .guest-dark input[type="checkbox"] {

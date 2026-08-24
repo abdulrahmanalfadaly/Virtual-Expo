@@ -49,9 +49,21 @@
             </div>
 
             <div class="flex items-center gap-3">
-                <a href="{{ route('login') }}" class="rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow transition hover:bg-gray-100">
-                    School Login
-                </a>
+                @auth
+                    @php
+                        $dashboardRoute = auth()->user()->isAdmin() ? route('admin.dashboard') : route('school.dashboard');
+                        $navUserName = auth()->user()->isAdmin() ? auth()->user()->name : (auth()->user()->school->name ?? auth()->user()->name);
+                        $navInitials = \Illuminate\Support\Str::of($navUserName)->explode(' ')->map(fn ($w) => mb_substr($w, 0, 1))->take(2)->implode('');
+                    @endphp
+                    <a href="{{ $dashboardRoute }}" class="flex items-center gap-2 rounded-full bg-white py-1.5 pl-1.5 pr-4 text-sm font-semibold text-gray-900 shadow transition hover:bg-gray-100">
+                        <span class="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-500 text-xs font-bold uppercase text-white">{{ $navInitials }}</span>
+                        <span class="max-w-[10rem] truncate">{{ $navUserName }}</span>
+                    </a>
+                @else
+                    <a href="{{ route('login') }}" class="rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow transition hover:bg-gray-100">
+                        School Login
+                    </a>
+                @endauth
             </div>
         </nav>
 
