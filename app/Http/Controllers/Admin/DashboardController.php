@@ -21,7 +21,7 @@ class DashboardController extends Controller
             'totalApplications' => Application::count(),
             'recentSchools' => School::latest()->take(5)->get(),
             'recentActivity' => ActivityLog::with(['user', 'school'])->latest()->take(10)->get(),
-            'settings' => SiteSetting::getMany(['site_name', 'allow_registration', 'allow_applications', 'require_admin_approval', 'link_preview_image_path']),
+            'settings' => SiteSetting::getMany(['site_name', 'allow_registration', 'allow_applications', 'require_admin_approval', 'link_preview_image_path', 'expo_logo_path']),
         ]);
     }
 }

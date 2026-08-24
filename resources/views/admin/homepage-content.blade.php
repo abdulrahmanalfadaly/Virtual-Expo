@@ -23,13 +23,6 @@
                     <input type="range" name="hero_overlay_opacity" id="hero-opacity" min="0" max="100" step="5" value="{{ old('hero_overlay_opacity', $settings['hero_overlay_opacity'] ?? 70) }}" class="mt-1 w-full">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Company / Expo Logo</label>
-                    @if (! empty($settings['expo_logo_path']))
-                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($settings['expo_logo_path']) }}" class="mt-2 h-12 w-12 rounded-lg object-contain ring-1 ring-gray-200">
-                    @endif
-                    <input type="file" name="expo_logo" accept="image/*" class="mt-2 w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                </div>
-                <div>
                     <label class="block text-sm font-medium text-gray-700">Website Background Image</label>
                     <p class="text-xs text-gray-400">Fixed background shown behind the homepage as visitors scroll.</p>
                     @if (! empty($settings['site_background_path']))

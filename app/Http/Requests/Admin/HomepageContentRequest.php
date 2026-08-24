@@ -25,7 +25,6 @@ class HomepageContentRequest extends FormRequest
             'contact_address' => ['nullable', 'string', 'max:255'],
             'support_info' => ['nullable', 'string', 'max:1000'],
             'footer_text' => ['nullable', 'string', 'max:500'],
-            'expo_logo' => ['nullable', 'image', 'max:2048'],
             'site_background' => ['nullable', 'image', 'max:4096'],
         ];
     }

@@ -33,6 +33,14 @@ class SettingsController extends Controller
             $data['link_preview_image_path'] = $request->file('link_preview_image')->store('site', 'public');
         }
 
+        if ($request->hasFile('expo_logo')) {
+            $existing = SiteSetting::get('expo_logo_path');
+            if ($existing) {
+                Storage::disk('public')->delete($existing);
+            }
+            $data['expo_logo_path'] = $request->file('expo_logo')->store('site', 'public');
+        }
+
         SiteSetting::setMany($data);
 
         ActivityLogger::log('admin.settings_updated', 'Admin updated general site settings');

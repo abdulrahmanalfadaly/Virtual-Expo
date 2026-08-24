@@ -19,6 +19,7 @@ class GeneralSettingsRequest extends FormRequest
             'allow_applications' => ['nullable', 'boolean'],
             'require_admin_approval' => ['nullable', 'boolean'],
             'link_preview_image' => ['nullable', 'image', 'max:2048'],
+            'expo_logo' => ['nullable', 'image', 'max:2048'],
         ];
     }
 }

@@ -15,7 +15,7 @@ class HomepageContentController extends Controller
     private const KEYS = [
         'hero_headline', 'hero_description', 'about_content',
         'contact_email', 'contact_phone', 'contact_address', 'support_info',
-        'footer_text', 'expo_logo_path', 'site_background_path',
+        'footer_text', 'site_background_path',
         'hero_overlay_opacity', 'schools_heading_prefix', 'schools_heading_highlight',
     ];
 
@@ -28,15 +28,7 @@ class HomepageContentController extends Controller
 
     public function update(HomepageContentRequest $request): RedirectResponse
     {
-        $data = $request->safe()->except(['expo_logo', 'site_background']);
-
-        if ($request->hasFile('expo_logo')) {
-            $existing = SiteSetting::get('expo_logo_path');
-            if ($existing) {
-                Storage::disk('public')->delete($existing);
-            }
-            $data['expo_logo_path'] = $request->file('expo_logo')->store('site', 'public');
-        }
+        $data = $request->safe()->except(['site_background']);
 
         if ($request->hasFile('site_background')) {
             $existing = SiteSetting::get('site_background_path');

@@ -66,6 +66,15 @@
                 </div>
 
                 <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700">Company / Expo Logo</label>
+                    <p class="text-xs text-gray-400">Shown next to the site name in the navigation on every page.</p>
+                    @if (! empty($settings['expo_logo_path']))
+                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($settings['expo_logo_path']) }}" class="mt-2 h-12 w-auto max-w-[200px] rounded-lg object-contain ring-1 ring-gray-200">
+                    @endif
+                    <input type="file" name="expo_logo" accept="image/*" class="mt-2 w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                </div>
+
+                <div class="mt-6">
                     <label class="block text-sm font-medium text-gray-700">Link Preview Image</label>
                     <p class="text-xs text-gray-400">Shown when your site's link is shared on WhatsApp, iMessage, social media, etc. Recommended size: 1200×630.</p>
                     @if (! empty($settings['link_preview_image_path']))
