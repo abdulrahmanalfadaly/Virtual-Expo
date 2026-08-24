@@ -25,9 +25,9 @@
                 @endphp
                 <a href="{{ route('home') }}" class="flex items-center gap-2 font-semibold text-white">
                     @if ($adminLogoPath)
-                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($adminLogoPath) }}" alt="Logo" class="h-8 w-8 rounded-lg object-contain">
+                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($adminLogoPath) }}" alt="Logo" class="h-12 w-12 rounded-lg object-contain">
                     @else
-                        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-500 text-xs font-bold text-white">VE</span>
+                        <span class="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-500 text-sm font-bold text-white">VE</span>
                     @endif
                     <span>{{ $adminSiteName }}</span>
                 </a>

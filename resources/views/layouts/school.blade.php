@@ -23,9 +23,9 @@
             @endphp
             <a href="{{ route('home') }}" class="flex items-center gap-2">
                 @if ($expoLogoPath)
-                    <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($expoLogoPath) }}" alt="Logo" class="h-9 w-9 rounded-lg object-contain">
+                    <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($expoLogoPath) }}" alt="Logo" class="h-12 w-12 rounded-lg object-contain">
                 @else
-                    <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-500 text-sm font-bold text-white">VE</span>
+                    <span class="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-500 text-sm font-bold text-white">VE</span>
                 @endif
                 <span class="pl-3 font-display text-lg font-semibold text-white">{{ $siteName }}</span>
             </a>

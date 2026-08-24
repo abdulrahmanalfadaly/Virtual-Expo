@@ -29,9 +29,9 @@
         <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
             <a href="#top" class="flex items-center gap-2">
                 @if (! empty($content['expo_logo_path']))
-                    <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($content['expo_logo_path']) }}" alt="Logo" class="h-9 w-9 rounded-lg object-contain">
+                    <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($content['expo_logo_path']) }}" alt="Logo" class="h-12 w-12 rounded-lg object-contain">
                 @else
-                    <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-500 text-sm font-bold text-white">VE</span>
+                    <span class="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-500 text-sm font-bold text-white">VE</span>
                 @endif
 <span class="site-nav-title pl-3 font-display text-lg font-semibold text-white">
     {{ $content['site_name'] ?? 'Virtual School Expo' }}
