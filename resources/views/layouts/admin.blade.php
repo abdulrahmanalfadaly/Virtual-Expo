@@ -18,18 +18,22 @@
     <div class="flex min-h-screen">
         <aside class="fixed inset-y-0 left-0 z-30 w-64 -translate-x-full bg-gray-900 text-gray-200 transition-transform lg:static lg:translate-x-0"
                :class="{ '!translate-x-0': sidebarOpen }">
-            <div class="flex h-16 items-center gap-2 px-6">
+            <div class="flex min-h-16 items-center gap-2 px-6 py-3">
                 @php
                     $adminLogoPath = \App\Models\SiteSetting::get('expo_logo_path');
                     $adminSiteName = \App\Models\SiteSetting::get('site_name', 'Virtual School Expo');
+                    $navLogoHeight = \App\Models\SiteSetting::get('nav_logo_height', 48);
+                    $showSiteName = \App\Models\SiteSetting::get('show_site_name_in_nav', true);
                 @endphp
                 <a href="{{ route('home') }}" class="flex items-center gap-2 font-semibold text-white">
                     @if ($adminLogoPath)
-                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($adminLogoPath) }}" alt="Logo" class="h-12 w-auto max-w-[200px] rounded-lg object-contain">
+                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($adminLogoPath) }}" alt="Logo" style="height: {{ $navLogoHeight }}px;" class="w-auto rounded-lg object-contain">
                     @else
-                        <span class="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-500 text-sm font-bold text-white">VE</span>
+                        <span class="flex items-center justify-center rounded-lg bg-indigo-500 font-bold text-white" style="height: {{ $navLogoHeight }}px; width: {{ $navLogoHeight }}px; font-size: {{ max(10, $navLogoHeight * 0.35) }}px;">VE</span>
                     @endif
-                    <span>{{ $adminSiteName }}</span>
+                    @if ($showSiteName)
+                        <span>{{ $adminSiteName }}</span>
+                    @endif
                 </a>
             </div>
             <nav class="mt-4 space-y-1 px-3 text-sm">

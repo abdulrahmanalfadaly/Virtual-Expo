@@ -65,13 +65,27 @@
                     <input type="text" name="site_name" value="{{ old('site_name', $settings['site_name']) }}" required class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                 </div>
 
+                <div class="mt-6 flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-900">Show Site Name Next to Logo</p>
+                        <p class="text-xs text-gray-500">When disabled, only the logo appears in the navigation on every page.</p>
+                    </div>
+                    <input type="checkbox" name="show_site_name_in_nav" value="1" @checked(old('show_site_name_in_nav', $settings['show_site_name_in_nav'] ?? true)) class="h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                </div>
+
                 <div class="mt-6">
                     <label class="block text-sm font-medium text-gray-700">Company / Expo Logo</label>
                     <p class="text-xs text-gray-400">Shown next to the site name in the navigation on every page.</p>
                     @if (! empty($settings['expo_logo_path']))
-                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($settings['expo_logo_path']) }}" class="mt-2 h-12 w-auto max-w-[200px] rounded-lg object-contain ring-1 ring-gray-200">
+                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($settings['expo_logo_path']) }}" style="height: {{ $settings['nav_logo_height'] ?? 48 }}px;" class="mt-2 w-auto rounded-lg object-contain ring-1 ring-gray-200">
                     @endif
                     <input type="file" name="expo_logo" accept="image/*" class="mt-2 w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                </div>
+
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700">Logo Height in Navigation (px)</label>
+                    <p class="text-xs text-gray-400">Controls how big the logo appears next to the site name. No size limit — the width scales automatically to match the logo's shape.</p>
+                    <input type="number" name="nav_logo_height" value="{{ old('nav_logo_height', $settings['nav_logo_height'] ?? 48) }}" min="1" required class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                 </div>
 
                 <div class="mt-6">

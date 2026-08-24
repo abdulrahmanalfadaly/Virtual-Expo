@@ -23,6 +23,8 @@ class SettingsController extends Controller
             'allow_registration' => $request->boolean('allow_registration'),
             'allow_applications' => $request->boolean('allow_applications'),
             'require_admin_approval' => $request->boolean('require_admin_approval'),
+            'show_site_name_in_nav' => $request->boolean('show_site_name_in_nav'),
+            'nav_logo_height' => $request->validated('nav_logo_height'),
         ];
 
         if ($request->hasFile('link_preview_image')) {

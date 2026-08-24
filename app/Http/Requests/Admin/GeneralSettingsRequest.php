@@ -20,6 +20,8 @@ class GeneralSettingsRequest extends FormRequest
             'require_admin_approval' => ['nullable', 'boolean'],
             'link_preview_image' => ['nullable', 'image', 'max:2048'],
             'expo_logo' => ['nullable', 'image', 'max:2048'],
+            'show_site_name_in_nav' => ['nullable', 'boolean'],
+            'nav_logo_height' => ['required', 'integer', 'min:1'],
         ];
     }
 }

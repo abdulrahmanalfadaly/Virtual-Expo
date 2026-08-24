@@ -27,15 +27,19 @@
 
     <header class="site-nav fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-gray-950/70 backdrop-blur">
         <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+            @php $navLogoHeight = $content['nav_logo_height'] ?? 48; @endphp
             <a href="#top" class="flex items-center gap-2">
                 @if (! empty($content['expo_logo_path']))
-                    <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($content['expo_logo_path']) }}" alt="Logo" class="h-12 w-auto max-w-[200px] rounded-lg object-contain">
+                    <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($content['expo_logo_path']) }}" alt="Logo" style="height: {{ $navLogoHeight }}px;" class="w-auto rounded-lg object-contain">
                 @else
-                    <span class="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-500 text-sm font-bold text-white">VE</span>
+                    <span class="flex items-center justify-center rounded-lg bg-indigo-500 font-bold text-white" style="height: {{ $navLogoHeight }}px; width: {{ $navLogoHeight }}px; font-size: {{ max(10, $navLogoHeight * 0.35) }}px;">VE</span>
                 @endif
-<span class="site-nav-title pl-3 font-display text-lg font-semibold text-white">
-    {{ $content['site_name'] ?? 'Virtual School Expo' }}
-</span>            </a>
+                @if ($content['show_site_name_in_nav'] ?? true)
+                    <span class="site-nav-title pl-3 font-display text-lg font-semibold text-white">
+                        {{ $content['site_name'] ?? 'Virtual School Expo' }}
+                    </span>
+                @endif
+            </a>
 
             <div class="hidden items-center gap-8 text-sm font-medium text-gray-200 md:flex">
                 <a href="#top" class="site-nav-link transition hover:text-white">Home</a>

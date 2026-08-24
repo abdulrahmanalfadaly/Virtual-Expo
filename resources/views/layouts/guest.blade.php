@@ -21,13 +21,17 @@
                     @php
                         $expoLogoPath = \App\Models\SiteSetting::get('expo_logo_path');
                         $siteName = \App\Models\SiteSetting::get('site_name', 'Virtual School Expo');
+                        $navLogoHeight = \App\Models\SiteSetting::get('nav_logo_height', 48);
+                        $showSiteName = \App\Models\SiteSetting::get('show_site_name_in_nav', true);
                     @endphp
                     @if ($expoLogoPath)
-                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($expoLogoPath) }}" alt="Logo" class="h-12 w-auto max-w-[200px] rounded-lg object-contain">
+                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($expoLogoPath) }}" alt="Logo" style="height: {{ $navLogoHeight }}px;" class="w-auto rounded-lg object-contain">
                     @else
-                        <span class="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-500 text-sm font-bold text-white">VE</span>
+                        <span class="flex items-center justify-center rounded-lg bg-indigo-500 font-bold text-white" style="height: {{ $navLogoHeight }}px; width: {{ $navLogoHeight }}px; font-size: {{ max(10, $navLogoHeight * 0.35) }}px;">VE</span>
                     @endif
-                    {{ $siteName }}
+                    @if ($showSiteName)
+                        {{ $siteName }}
+                    @endif
                 </a>
             </div>
 
