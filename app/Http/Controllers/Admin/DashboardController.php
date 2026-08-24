@@ -7,6 +7,7 @@ use App\Models\ActivityLog;
 use App\Models\Application;
 use App\Models\School;
 use App\Models\SiteSetting;
+use App\Models\Teacher;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
@@ -18,6 +19,7 @@ class DashboardController extends Controller
             'publishedSchools' => School::where('is_published', true)->where('status', 'active')->count(),
             'unpublishedSchools' => School::where('is_published', false)->count(),
             'suspendedSchools' => School::where('status', 'suspended')->count(),
+            'totalTeachers' => Teacher::count(),
             'totalApplications' => Application::count(),
             'recentSchools' => School::latest()->take(5)->get(),
             'recentActivity' => ActivityLog::with(['user', 'school'])->latest()->take(10)->get(),
