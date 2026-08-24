@@ -41,6 +41,21 @@
         </div>
 
         <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
+            <h2 class="text-base font-semibold text-gray-900">Schools Section Heading</h2>
+            <p class="mt-1 text-xs text-gray-400">Shown above the school booths, e.g. "Welcome to the Virtual School Expo".</p>
+            <div class="mt-4 grid gap-4 sm:grid-cols-2">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Text</label>
+                    <input type="text" name="schools_heading_prefix" value="{{ old('schools_heading_prefix', $settings['schools_heading_prefix'] ?? 'Welcome to the') }}" class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Highlighted Text</label>
+                    <input type="text" name="schools_heading_highlight" value="{{ old('schools_heading_highlight', $settings['schools_heading_highlight'] ?? 'Virtual School Expo') }}" class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                </div>
+            </div>
+        </div>
+
+        <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
             <h2 class="text-base font-semibold text-gray-900">About Section</h2>
             <textarea name="about_content" rows="5" class="mt-4 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('about_content', $settings['about_content']) }}</textarea>
         </div>

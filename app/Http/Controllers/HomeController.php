@@ -23,7 +23,7 @@ class HomeController extends Controller
                 'hero_headline', 'hero_description', 'about_content',
                 'contact_email', 'contact_phone', 'contact_address', 'support_info',
                 'footer_text', 'expo_logo_path', 'site_name', 'site_background_path',
-                'hero_overlay_opacity',
+                'hero_overlay_opacity', 'schools_heading_prefix', 'schools_heading_highlight',
             ]),
             'boothSettings' => SiteSetting::getMany([
                 'booth_template_path', 'booth_logo_x',

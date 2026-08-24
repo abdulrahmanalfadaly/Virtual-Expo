@@ -16,6 +16,8 @@ class HomepageContentRequest extends FormRequest
         return [
             'hero_headline' => ['required', 'string', 'max:255'],
             'hero_description' => ['nullable', 'string', 'max:1000'],
+            'schools_heading_prefix' => ['nullable', 'string', 'max:255'],
+            'schools_heading_highlight' => ['nullable', 'string', 'max:255'],
             'hero_overlay_opacity' => ['required', 'integer', 'min:0', 'max:100'],
             'about_content' => ['nullable', 'string', 'max:5000'],
             'contact_email' => ['nullable', 'email', 'max:255'],

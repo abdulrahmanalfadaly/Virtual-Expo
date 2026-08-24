@@ -23,7 +23,7 @@
                         $siteName = \App\Models\SiteSetting::get('site_name', 'Virtual School Expo');
                     @endphp
                     @if ($expoLogoPath)
-                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($expoLogoPath) }}" alt="Logo" class="h-12 w-12 rounded-lg object-contain">
+                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($expoLogoPath) }}" alt="Logo" class="h-12 w-auto max-w-[200px] rounded-lg object-contain">
                     @else
                         <span class="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-500 text-sm font-bold text-white">VE</span>
                     @endif

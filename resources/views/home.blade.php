@@ -29,7 +29,7 @@
         <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
             <a href="#top" class="flex items-center gap-2">
                 @if (! empty($content['expo_logo_path']))
-                    <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($content['expo_logo_path']) }}" alt="Logo" class="h-12 w-12 rounded-lg object-contain">
+                    <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($content['expo_logo_path']) }}" alt="Logo" class="h-12 w-auto max-w-[200px] rounded-lg object-contain">
                 @else
                     <span class="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-500 text-sm font-bold text-white">VE</span>
                 @endif
@@ -98,7 +98,7 @@
             <div class="mx-auto max-w-7xl px-6">
                 <div class="site-schools-panel mx-auto max-w-3xl rounded-3xl bg-gray-950/70 px-6 py-10 text-center shadow-xl backdrop-blur-sm sm:px-10 sm:py-14">
                     <h2 class="site-schools-heading font-display text-4xl font-bold tracking-tight text-white sm:text-6xl">
-                        Welcome to the <span class="site-gradient-text bg-gradient-to-r from-indigo-300 to-pink-300 bg-clip-text text-transparent">Virtual School Expo</span>
+                        {{ $content['schools_heading_prefix'] ?? 'Welcome to the' }} <span class="site-gradient-text bg-gradient-to-r from-indigo-300 to-pink-300 bg-clip-text text-transparent">{{ $content['schools_heading_highlight'] ?? 'Virtual School Expo' }}</span>
                     </h2>
                     <p class="site-schools-subtitle mt-4 text-gray-200">Click on any booth to explore programs, media, and get in touch directly.</p>
                 </div>

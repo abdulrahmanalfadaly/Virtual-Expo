@@ -16,7 +16,7 @@ class HomepageContentController extends Controller
         'hero_headline', 'hero_description', 'about_content',
         'contact_email', 'contact_phone', 'contact_address', 'support_info',
         'footer_text', 'expo_logo_path', 'site_background_path',
-        'hero_overlay_opacity',
+        'hero_overlay_opacity', 'schools_heading_prefix', 'schools_heading_highlight',
     ];
 
     public function edit(): View
