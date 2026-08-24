@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CreateSchoolRequest;
+use App\Http\Requests\Admin\UpdateSchoolPasswordRequest;
 use App\Http\Requests\Admin\UpdateSchoolRequest;
 use App\Models\School;
 use App\Models\SiteSetting;
@@ -123,6 +124,15 @@ class SchoolController extends Controller
         ActivityLogger::log('admin.school_updated', "Admin updated {$school->name}", $school);
 
         return redirect()->route('admin.schools.edit', $school)->with('status', 'School updated.');
+    }
+
+    public function updatePassword(UpdateSchoolPasswordRequest $request, School $school): RedirectResponse
+    {
+        $school->user->update(['password' => Hash::make($request->validated('password'))]);
+
+        ActivityLogger::log('admin.school_password_changed', "Admin changed the password for {$school->name}", $school);
+
+        return redirect()->route('admin.schools.edit', $school)->with('status', 'Password updated.');
     }
 
     public function publish(School $school): RedirectResponse

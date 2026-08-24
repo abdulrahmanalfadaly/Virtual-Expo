@@ -89,15 +89,19 @@
                 </h2>
                 <a href="{{ route('admin.activity.index') }}" class="text-xs font-semibold text-indigo-600 hover:text-indigo-500">View all &rarr;</a>
             </div>
-            <div class="mt-5 space-y-5">
+            <div class="mt-5 space-y-4">
                 @forelse ($recentActivity as $log)
-                    <div class="relative flex gap-3 pl-1">
-                        <span class="relative mt-1.5 flex h-2 w-2 shrink-0 rounded-full bg-indigo-400"></span>
-                        <div>
-                            <p class="text-sm text-gray-800">{{ $log->description }}</p>
-                            <p class="mt-0.5 text-xs text-gray-400">{{ $log->created_at->diffForHumans() }}</p>
+                    @if ($log->action === 'school.password_reset_requested' && $resetRequest = $log->passwordResetRequest())
+                        @include('admin.partials.password-reset-request-card', ['log' => $log, 'resetRequest' => $resetRequest])
+                    @else
+                        <div class="relative flex gap-3 pl-1">
+                            <span class="relative mt-1.5 flex h-2 w-2 shrink-0 rounded-full bg-indigo-400"></span>
+                            <div>
+                                <p class="text-sm text-gray-800">{{ $log->description }}</p>
+                                <p class="mt-0.5 text-xs text-gray-400">{{ $log->created_at->diffForHumans() }}</p>
+                            </div>
                         </div>
-                    </div>
+                    @endif
                 @empty
                     <p class="py-6 text-center text-sm text-gray-400">No activity yet.</p>
                 @endforelse

@@ -16,7 +16,7 @@
 <body class="font-sans antialiased bg-gray-50 text-gray-900" x-data="{ sidebarOpen: false, bellOpen: false }">
 
     <div class="flex min-h-screen">
-        <aside class="fixed inset-y-0 left-0 z-30 w-64 -translate-x-full bg-gray-900 text-gray-200 transition-transform lg:static lg:translate-x-0"
+        <aside class="fixed inset-y-0 left-0 z-30 w-64 -translate-x-full overflow-y-auto bg-gray-900 text-gray-200 transition-transform lg:translate-x-0"
                :class="{ '!translate-x-0': sidebarOpen }">
             <div class="flex min-h-16 items-center gap-2 px-6 py-3">
                 @php
@@ -62,7 +62,7 @@
             </div>
         </aside>
 
-        <div class="flex-1">
+        <div class="flex-1 lg:ml-64">
             <header class="flex h-16 items-center justify-between border-b border-gray-200 bg-white px-4 sm:px-6">
                 <button class="lg:hidden" @click="sidebarOpen = !sidebarOpen" aria-label="Toggle menu">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

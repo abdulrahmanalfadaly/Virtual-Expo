@@ -33,4 +33,11 @@ class ActivityLog extends Model
     {
         return $this->belongsTo(School::class);
     }
+
+    public function passwordResetRequest(): ?PasswordResetRequest
+    {
+        $id = $this->metadata['password_reset_request_id'] ?? null;
+
+        return $id ? PasswordResetRequest::find($id) : null;
+    }
 }

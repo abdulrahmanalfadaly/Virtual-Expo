@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\GalleryImageController as AdminGalleryImageController;
 use App\Http\Controllers\Admin\HomepageContentController;
 use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Admin\PasswordResetRequestController;
 use App\Http\Controllers\Admin\ProgramController as AdminProgramController;
 use App\Http\Controllers\Admin\SchoolController as AdminSchoolController;
 use App\Http\Controllers\Admin\SettingsController;
@@ -77,6 +78,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/schools/{school}', [AdminSchoolController::class, 'show'])->name('schools.show');
     Route::get('/schools/{school}/edit', [AdminSchoolController::class, 'edit'])->name('schools.edit');
     Route::put('/schools/{school}', [AdminSchoolController::class, 'update'])->name('schools.update');
+    Route::put('/schools/{school}/password', [AdminSchoolController::class, 'updatePassword'])->name('schools.update-password');
     Route::post('/schools/{school}/publish', [AdminSchoolController::class, 'publish'])->name('schools.publish');
     Route::post('/schools/{school}/unpublish', [AdminSchoolController::class, 'unpublish'])->name('schools.unpublish');
     Route::post('/schools/{school}/suspend', [AdminSchoolController::class, 'suspend'])->name('schools.suspend');
@@ -105,6 +107,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');
 
     Route::get('/activity', [ActivityLogController::class, 'index'])->name('activity.index');
+
+    Route::post('/password-reset-requests/{passwordResetRequest}/approve', [PasswordResetRequestController::class, 'approve'])->name('password-reset-requests.approve');
 
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::get('/notifications/{id}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
