@@ -8,6 +8,10 @@
     }
 }
 
+[x-cloak] {
+    display: none !important;
+}
+
 .font-display {
     font-family: 'Fraunces', ui-serif, Georgia, serif;
 }

@@ -9,6 +9,7 @@ class Application extends Model
 {
     protected $fillable = [
         'school_id',
+        'teacher_id',
         'applicant_name',
         'applicant_email',
         'applicant_phone',
@@ -28,5 +29,10 @@ class Application extends Model
     public function school(): BelongsTo
     {
         return $this->belongsTo(School::class);
+    }
+
+    public function teacher(): BelongsTo
+    {
+        return $this->belongsTo(Teacher::class);
     }
 }

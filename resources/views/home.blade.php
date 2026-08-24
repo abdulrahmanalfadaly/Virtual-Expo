@@ -51,8 +51,13 @@
             <div class="flex items-center gap-3">
                 @auth
                     @php
-                        $dashboardRoute = auth()->user()->isAdmin() ? route('admin.dashboard') : route('school.dashboard');
-                        $navUserName = auth()->user()->isAdmin() ? auth()->user()->name : (auth()->user()->school->name ?? auth()->user()->name);
+                        $navUser = auth()->user();
+                        $dashboardRoute = match (true) {
+                            $navUser->isAdmin() => route('admin.dashboard'),
+                            $navUser->isSchool() => route('school.dashboard'),
+                            default => route('home'),
+                        };
+                        $navUserName = $navUser->isSchool() ? ($navUser->school->name ?? $navUser->name) : $navUser->name;
                         $navInitials = \Illuminate\Support\Str::of($navUserName)->explode(' ')->map(fn ($w) => mb_substr($w, 0, 1))->take(2)->implode('');
                     @endphp
                     <a href="{{ $dashboardRoute }}" class="flex items-center gap-2 rounded-full bg-white py-1.5 pl-1.5 pr-4 text-sm font-semibold text-gray-900 shadow transition hover:bg-gray-100">
@@ -61,7 +66,7 @@
                     </a>
                 @else
                     <a href="{{ route('login') }}" class="rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow transition hover:bg-gray-100">
-                        School Login
+                        Login
                     </a>
                 @endauth
             </div>
@@ -87,9 +92,6 @@
                 <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
                     <a href="#schools" class="rounded-full bg-indigo-500 px-7 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/30 transition hover:bg-indigo-400">
                         Explore Booths
-                    </a>
-                    <a href="{{ route('register') }}" class="rounded-full border border-white/30 px-7 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
-                        Register Your School
                     </a>
                 </div>
             </div>

@@ -37,6 +37,11 @@ class User extends Authenticatable
         return $this->hasOne(School::class);
     }
 
+    public function teacher()
+    {
+        return $this->hasOne(Teacher::class);
+    }
+
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
@@ -45,5 +50,10 @@ class User extends Authenticatable
     public function isSchool(): bool
     {
         return $this->role === 'school';
+    }
+
+    public function isTeacher(): bool
+    {
+        return $this->role === 'teacher';
     }
 }

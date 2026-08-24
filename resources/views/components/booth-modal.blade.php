@@ -52,7 +52,7 @@
                 @endif
 
                 <div class="mt-12 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
-                    @if ($allowApplications)
+                    @if ($allowApplications && auth()->user()?->isTeacher())
                         <button type="button" class="apply-trigger inline-flex items-center justify-center gap-2 rounded-full border-2 border-gray-300 px-6 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800">
                             Submit Your CV
                         </button>
@@ -71,32 +71,20 @@
                 </div>
             </div>
 
-            @if ($allowApplications)
+            @if ($allowApplications && auth()->user()?->isTeacher())
                 <div class="apply-panel border-t border-gray-200 px-6 py-8 dark:border-gray-700 sm:px-10">
                     <h4 class="font-display text-lg font-semibold text-gray-900 dark:text-white">Apply to {{ $school->name }}</h4>
+                    @auth
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                            Applying as <span class="font-medium text-gray-700 dark:text-gray-200">{{ auth()->user()->name }}</span> ({{ auth()->user()->email }})
+                        </p>
+                    @endauth
                     <form class="apply-form mt-4 space-y-4" data-apply-url="{{ route('apply.store', $school) }}">
                         @csrf
-                        <div class="grid gap-4 sm:grid-cols-2">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Full name</label>
-                                <input type="text" name="applicant_name" required class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white">
-                                <p class="field-error mt-1 text-xs text-red-600" data-field="applicant_name"></p>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
-                                <input type="email" name="applicant_email" required class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white">
-                                <p class="field-error mt-1 text-xs text-red-600" data-field="applicant_email"></p>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Phone (optional)</label>
-                                <input type="text" name="applicant_phone" class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white">
-                                <p class="field-error mt-1 text-xs text-red-600" data-field="applicant_phone"></p>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">CV (PDF/DOC/DOCX, max 5MB)</label>
-                                <input type="file" name="cv" required accept=".pdf,.doc,.docx" class="mt-1 w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white">
-                                <p class="field-error mt-1 text-xs text-red-600" data-field="cv"></p>
-                            </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">CV (PDF/DOC/DOCX, max 5MB)</label>
+                            <input type="file" name="cv" required accept=".pdf,.doc,.docx" class="mt-1 w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white">
+                            <p class="field-error mt-1 text-xs text-red-600" data-field="cv"></p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Message (optional)</label>

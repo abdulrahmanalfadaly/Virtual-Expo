@@ -24,15 +24,17 @@ class ApplyController extends Controller
         }
 
         $data = $request->validated();
+        $teacher = $request->user()->teacher;
 
         $file = $request->file('cv');
         $storedName = Str::uuid()->toString().'.'.$file->getClientOriginalExtension();
         $path = $file->storeAs("cvs/{$school->id}", $storedName, 'local');
 
         $application = $school->applications()->create([
-            'applicant_name' => $data['applicant_name'],
-            'applicant_email' => $data['applicant_email'],
-            'applicant_phone' => $data['applicant_phone'] ?? null,
+            'teacher_id' => $teacher?->id,
+            'applicant_name' => $request->user()->name,
+            'applicant_email' => $request->user()->email,
+            'applicant_phone' => $teacher?->phone,
             'message' => $data['message'] ?? null,
             'cv_path' => $path,
             'cv_original_name' => $file->getClientOriginalName(),

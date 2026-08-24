@@ -12,7 +12,10 @@ use App\Http\Controllers\Admin\PasswordResetRequestController;
 use App\Http\Controllers\Admin\ProgramController as AdminProgramController;
 use App\Http\Controllers\Admin\SchoolController as AdminSchoolController;
 use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\TeacherController as AdminTeacherController;
 use App\Http\Controllers\ApplyController;
+use App\Http\Controllers\Auth\TeacherAuthController;
+use App\Http\Controllers\Auth\TeacherRegisteredController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\School\ApplicationController as SchoolApplicationController;
@@ -22,9 +25,21 @@ use App\Http\Controllers\School\GalleryImageController;
 use App\Http\Controllers\School\ProgramController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/', [HomeController::class, 'index'])
+    ->middleware(['auth', 'school.active', 'teacher.active'])
+    ->name('home');
 
-Route::post('/apply/{school:slug}', [ApplyController::class, 'store'])->name('apply.store');
+Route::post('/apply/{school:slug}', [ApplyController::class, 'store'])
+    ->middleware(['auth', 'role:teacher', 'teacher.active'])
+    ->name('apply.store');
+
+// Teacher registration & login (guest only)
+Route::middleware('guest')->prefix('teacher')->name('teacher.')->group(function () {
+    Route::get('/register', [TeacherRegisteredController::class, 'create'])->name('register');
+    Route::post('/register', [TeacherRegisteredController::class, 'store'])->name('register.store');
+    Route::get('/login', [TeacherAuthController::class, 'create'])->name('login');
+    Route::post('/login', [TeacherAuthController::class, 'store'])->name('login.store');
+});
 
 Route::get('/dashboard', function () {
     return auth()->user()->isAdmin()
@@ -93,6 +108,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/schools/{school}/gallery', [AdminGalleryImageController::class, 'index'])->name('schools.gallery.index');
     Route::post('/schools/{school}/gallery', [AdminGalleryImageController::class, 'store'])->name('schools.gallery.store');
     Route::delete('/schools/{school}/gallery/{image}', [AdminGalleryImageController::class, 'destroy'])->name('schools.gallery.destroy');
+
+    Route::get('/teachers', [AdminTeacherController::class, 'index'])->name('teachers.index');
+    Route::get('/teachers/{teacher}/edit', [AdminTeacherController::class, 'edit'])->name('teachers.edit');
+    Route::put('/teachers/{teacher}/password', [AdminTeacherController::class, 'updatePassword'])->name('teachers.update-password');
+    Route::post('/teachers/{teacher}/suspend', [AdminTeacherController::class, 'suspend'])->name('teachers.suspend');
+    Route::post('/teachers/{teacher}/reactivate', [AdminTeacherController::class, 'reactivate'])->name('teachers.reactivate');
+    Route::delete('/teachers/{teacher}', [AdminTeacherController::class, 'destroy'])->name('teachers.destroy');
 
     Route::get('/applications', [AdminApplicationController::class, 'index'])->name('applications.index');
     Route::get('/applications/{application}/cv', [AdminApplicationController::class, 'downloadCv'])->name('applications.cv');

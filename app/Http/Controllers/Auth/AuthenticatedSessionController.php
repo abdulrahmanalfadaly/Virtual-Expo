@@ -25,15 +25,23 @@ class AuthenticatedSessionController extends Controller
         if ($user->isAdmin()) {
             Auth::logout();
 
-            return redirect()->route('login')->withErrors([
+            return redirect()->route('login')->withInput()->withErrors([
                 'email' => 'Please use the admin login page.',
+            ]);
+        }
+
+        if ($user->isTeacher()) {
+            Auth::logout();
+
+            return redirect()->route('login')->withInput()->withErrors([
+                'email' => 'This is a teacher account. Please switch to the Teacher tab to log in.',
             ]);
         }
 
         if ($user->school && $user->school->status === 'suspended') {
             Auth::logout();
 
-            return redirect()->route('login')->withErrors([
+            return redirect()->route('login')->withInput()->withErrors([
                 'email' => 'Your school account has been suspended. Please contact the administrator.',
             ]);
         }

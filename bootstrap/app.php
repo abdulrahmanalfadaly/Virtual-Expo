@@ -15,11 +15,30 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\EnsureUserHasRole::class,
             'school.active' => \App\Http\Middleware\EnsureSchoolActive::class,
+            'teacher.active' => \App\Http\Middleware\EnsureTeacherActive::class,
         ]);
 
-        $middleware->redirectGuestsTo(fn ($request) => $request->is('admin/*') ? route('admin.login') : route('login'));
+        $middleware->redirectGuestsTo(function ($request) {
+            if ($request->is('admin/*')) {
+                return route('admin.login');
+            }
 
-        $middleware->redirectUsersTo(fn ($request) => auth()->user()?->isAdmin() ? route('admin.dashboard') : route('school.dashboard'));
+            if ($request->is('school/*')) {
+                return route('login', ['as' => 'school']);
+            }
+
+            return route('login');
+        });
+
+        $middleware->redirectUsersTo(function ($request) {
+            $user = auth()->user();
+
+            return match (true) {
+                $user?->isAdmin() => route('admin.dashboard'),
+                $user?->isSchool() => route('school.dashboard'),
+                default => route('home'),
+            };
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
