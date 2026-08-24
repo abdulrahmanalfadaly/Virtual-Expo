@@ -82,17 +82,27 @@
     <main>
         <section id="top" class="hero-gradient relative flex min-h-screen items-center overflow-hidden pt-24"
                  style="--hero-overlay-opacity: {{ ($content['hero_overlay_opacity'] ?? 70) / 100 }};">
-            <div class="relative z-10 mx-auto max-w-5xl px-6 text-center">
-                <h1 class="font-display text-4xl font-semibold leading-tight text-white sm:text-6xl">
-                    {{ $content['hero_headline'] ?? 'Discover Your Future School' }}
-                </h1>
-                @if (! empty($content['hero_description']))
-                    <p class="mx-auto mt-6 max-w-2xl text-lg text-gray-300">{{ $content['hero_description'] }}</p>
-                @endif
-                <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
-                    <a href="#schools" class="rounded-full bg-indigo-500 px-7 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/30 transition hover:bg-indigo-400">
-                        Explore Booths
-                    </a>
+            <div class="relative z-10 mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 px-6 lg:grid-cols-2 lg:gap-16">
+                <div class="flex justify-center lg:justify-end">
+                    @if (! empty($content['expo_logo_path']))
+                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($content['expo_logo_path']) }}" alt="Logo" class="w-full max-w-xs object-contain drop-shadow-2xl sm:max-w-sm lg:max-w-md">
+                    @else
+                        <span class="flex h-48 w-48 items-center justify-center rounded-3xl bg-indigo-500 text-6xl font-bold text-white shadow-2xl sm:h-56 sm:w-56 lg:h-64 lg:w-64">VE</span>
+                    @endif
+                </div>
+
+                <div class="text-center lg:text-left">
+                    <h1 class="font-display text-4xl font-semibold leading-tight text-white sm:text-6xl">
+                        {{ $content['hero_headline'] ?? 'Discover Your Future School' }}
+                    </h1>
+                    @if (! empty($content['hero_description']))
+                        <p class="mx-auto mt-6 max-w-2xl text-lg text-gray-300 lg:mx-0">{{ $content['hero_description'] }}</p>
+                    @endif
+                    <div class="mt-10 flex flex-wrap items-center justify-center gap-4 lg:justify-start">
+                        <a href="#schools" class="rounded-full bg-indigo-500 px-7 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/30 transition hover:bg-indigo-400">
+                            Explore Booths
+                        </a>
+                    </div>
                 </div>
             </div>
 
