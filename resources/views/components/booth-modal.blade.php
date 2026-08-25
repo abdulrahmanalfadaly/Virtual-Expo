@@ -79,41 +79,70 @@
             </div>
 
             @if ($allowApplications && auth()->user()?->isTeacher())
-                <div class="apply-panel border-t border-gray-200 px-6 py-8 dark:border-gray-700 sm:px-10">
-                    <h4 class="font-display text-lg font-semibold text-gray-900 dark:text-white">Apply to {{ $school->name }}</h4>
-                    @auth
-                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                            Applying as <span class="font-medium text-gray-700 dark:text-gray-200">{{ auth()->user()->name }}</span> ({{ auth()->user()->email }})
-                        </p>
-                    @endauth
+                <div class="apply-panel border-t border-gray-200 bg-gray-50/60 px-6 py-8 dark:border-gray-700 dark:bg-gray-900/40 sm:px-10">
+                    <div class="mx-auto max-w-xl">
+                        <div class="flex items-center gap-3">
+                            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white shadow-sm" style="background-color: {{ $school->theme_color }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                                </svg>
+                            </span>
+                            <div>
+                                <h4 class="font-display text-lg font-semibold text-gray-900 dark:text-white">Apply to {{ $school->name }}</h4>
+                                @auth
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                                        Applying as <span class="font-medium text-gray-700 dark:text-gray-200">{{ auth()->user()->name }}</span> &middot; {{ auth()->user()->email }}
+                                    </p>
+                                @endauth
+                            </div>
+                        </div>
 
-                    @if ($appliedAt)
-                        <div class="mt-4 flex items-start gap-2 rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="mt-0.5 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                            </svg>
-                            <span>You already applied to this school on {{ $appliedAt->format('M j, Y') }}. Submitting again will replace your previous CV and message — no need to reapply unless you want to update it.</span>
-                        </div>
-                    @endif
+                        @if ($appliedAt)
+                            <div class="mt-5 flex items-start gap-2 rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-800 ring-1 ring-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-300 dark:ring-emerald-900/40">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="mt-0.5 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                </svg>
+                                <span>You already applied to this school on {{ $appliedAt->format('M j, Y') }}. Submitting again will replace your previous CV and message.</span>
+                            </div>
+                        @endif
 
-                    <form class="apply-form mt-4 space-y-4" data-apply-url="{{ route('apply.store', $school) }}">
-                        @csrf
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">CV (PDF/DOC/DOCX, max 5MB)</label>
-                            <input type="file" name="cv" required accept=".pdf,.doc,.docx" class="mt-1 w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white">
-                            <p class="field-error mt-1 text-xs text-red-600" data-field="cv"></p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Message (optional)</label>
-                            <textarea name="message" rows="3" class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"></textarea>
-                            <p class="field-error mt-1 text-xs text-red-600" data-field="message"></p>
-                        </div>
-                        <div class="apply-feedback text-sm"></div>
-                        <button type="submit" class="apply-submit inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-semibold text-white shadow transition hover:opacity-90"
-                            style="background-color: {{ $school->theme_color }}">
-                            {{ $appliedAt ? 'Update Application' : 'Submit Application' }}
-                        </button>
-                    </form>
+                        <form class="apply-form mt-6 space-y-5" data-apply-url="{{ route('apply.store', $school) }}">
+                            @csrf
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">CV / Resume</label>
+                                <label for="cv-input-{{ $school->id }}"
+                                    class="cv-dropzone mt-2 flex cursor-pointer items-center gap-3 rounded-xl border-2 border-dashed border-gray-300 bg-white px-4 py-4 transition hover:border-indigo-400 hover:bg-indigo-50/40 dark:border-gray-600 dark:bg-gray-800 dark:hover:border-indigo-500 dark:hover:bg-indigo-500/10">
+                                    <span class="cv-dropzone-icon flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                                        </svg>
+                                    </span>
+                                    <span class="flex-1 overflow-hidden">
+                                        <span class="cv-dropzone-text block truncate text-sm font-medium text-gray-700 dark:text-gray-200">Click to upload your CV</span>
+                                        <span class="cv-dropzone-hint block text-xs text-gray-400">PDF, DOC, or DOCX &middot; max 5MB</span>
+                                    </span>
+                                    <input id="cv-input-{{ $school->id }}" type="file" name="cv" required accept=".pdf,.doc,.docx" class="sr-only">
+                                </label>
+                                <p class="field-error mt-1 text-xs text-red-600" data-field="cv"></p>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Message (optional)</label>
+                                <textarea name="message" rows="3" placeholder="Tell them a bit about yourself..." class="mt-2 w-full rounded-xl border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"></textarea>
+                                <p class="field-error mt-1 text-xs text-red-600" data-field="message"></p>
+                            </div>
+
+                            <div class="apply-feedback text-sm"></div>
+
+                            <button type="submit" class="apply-submit inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:opacity-90 sm:w-auto"
+                                style="background-color: {{ $school->theme_color }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5m0 0l-6 6m6-6l6 6" />
+                                </svg>
+                                {{ $appliedAt ? 'Update Application' : 'Submit Application' }}
+                            </button>
+                        </form>
+                    </div>
                 </div>
             @endif
         </div>

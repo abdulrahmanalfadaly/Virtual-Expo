@@ -67,6 +67,39 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
+function setCvDropzoneFile(dropzone, name) {
+    const text = dropzone.querySelector('.cv-dropzone-text');
+    const hint = dropzone.querySelector('.cv-dropzone-hint');
+    const icon = dropzone.querySelector('.cv-dropzone-icon');
+    if (! text || ! hint || ! icon) return;
+
+    if (name) {
+        text.textContent = name;
+        hint.textContent = 'Ready to submit — click to choose a different file';
+        dropzone.classList.add('border-emerald-300', 'bg-emerald-50/40');
+        dropzone.classList.remove('border-gray-300');
+        icon.classList.add('bg-emerald-50', 'text-emerald-600');
+        icon.classList.remove('bg-indigo-50', 'text-indigo-600');
+        icon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
+    } else {
+        text.textContent = 'Click to upload your CV';
+        hint.textContent = 'PDF, DOC, or DOCX · max 5MB';
+        dropzone.classList.remove('border-emerald-300', 'bg-emerald-50/40');
+        dropzone.classList.add('border-gray-300');
+        icon.classList.remove('bg-emerald-50', 'text-emerald-600');
+        icon.classList.add('bg-indigo-50', 'text-indigo-600');
+        icon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>';
+    }
+}
+
+document.addEventListener('change', (e) => {
+    const input = e.target.closest('.cv-dropzone input[type="file"]');
+    if (! input) return;
+
+    const dropzone = input.closest('.cv-dropzone');
+    setCvDropzoneFile(dropzone, input.files[0]?.name ?? null);
+});
+
 document.addEventListener('submit', async (e) => {
     const form = e.target.closest('.apply-form');
     if (! form) return;
@@ -107,6 +140,7 @@ document.addEventListener('submit', async (e) => {
             feedback.textContent = data.message || 'Application submitted successfully.';
             feedback.classList.add('text-green-600');
             form.reset();
+            form.querySelectorAll('.cv-dropzone').forEach((dz) => setCvDropzoneFile(dz, null));
         }
     } catch (err) {
         feedback.textContent = 'Network error. Please try again.';
