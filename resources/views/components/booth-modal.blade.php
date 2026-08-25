@@ -1,4 +1,4 @@
-@props(['school', 'allowApplications' => true, 'modalOpacity' => 90])
+@props(['school', 'allowApplications' => true, 'modalOpacity' => 90, 'appliedAt' => null])
 
 @php
     $embedUrl = \App\Support\VideoUrl::embedUrl($school->video_url);
@@ -53,8 +53,15 @@
 
                 <div class="mt-12 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
                     @if ($allowApplications && auth()->user()?->isTeacher())
-                        <button type="button" class="apply-trigger inline-flex items-center justify-center gap-2 rounded-full border-2 border-gray-300 px-6 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800">
-                            Submit Your CV
+                        <button type="button" class="apply-trigger inline-flex items-center justify-center gap-2 rounded-full border-2 px-6 py-3 text-sm font-semibold transition {{ $appliedAt ? 'border-emerald-300 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-600 dark:text-emerald-300 dark:hover:bg-emerald-900/20' : 'border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800' }}">
+                            @if ($appliedAt)
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                </svg>
+                                Applied — Update CV
+                            @else
+                                Submit Your CV
+                            @endif
                         </button>
                     @endif
 
@@ -79,6 +86,16 @@
                             Applying as <span class="font-medium text-gray-700 dark:text-gray-200">{{ auth()->user()->name }}</span> ({{ auth()->user()->email }})
                         </p>
                     @endauth
+
+                    @if ($appliedAt)
+                        <div class="mt-4 flex items-start gap-2 rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mt-0.5 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                            </svg>
+                            <span>You already applied to this school on {{ $appliedAt->format('M j, Y') }}. Submitting again will replace your previous CV and message — no need to reapply unless you want to update it.</span>
+                        </div>
+                    @endif
+
                     <form class="apply-form mt-4 space-y-4" data-apply-url="{{ route('apply.store', $school) }}">
                         @csrf
                         <div>
@@ -94,7 +111,7 @@
                         <div class="apply-feedback text-sm"></div>
                         <button type="submit" class="apply-submit inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-semibold text-white shadow transition hover:opacity-90"
                             style="background-color: {{ $school->theme_color }}">
-                            Submit Application
+                            {{ $appliedAt ? 'Update Application' : 'Submit Application' }}
                         </button>
                     </form>
                 </div>

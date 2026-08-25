@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\School;
 use App\Models\SiteSetting;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class HomeController extends Controller
@@ -17,8 +18,15 @@ class HomeController extends Controller
             ->orderBy('name')
             ->get();
 
+        $teacher = Auth::user()?->teacher;
+
+        $existingApplications = $teacher
+            ? $teacher->applications()->pluck('created_at', 'school_id')
+            : collect();
+
         return view('home', [
             'schools' => $schools,
+            'existingApplications' => $existingApplications,
             'content' => SiteSetting::getMany([
                 'hero_headline', 'hero_description', 'about_content',
                 'contact_email', 'contact_phone', 'contact_address', 'support_info',

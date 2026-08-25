@@ -173,7 +173,7 @@
     </footer>
 
     @foreach ($schools as $school)
-        <x-booth-modal :school="$school" :allow-applications="$allowApplications" :modal-opacity="$boothModalOpacity ?? 90" />
+        <x-booth-modal :school="$school" :allow-applications="$allowApplications" :modal-opacity="$boothModalOpacity ?? 90" :applied-at="$existingApplications->get($school->id)" />
     @endforeach
 
     <script>

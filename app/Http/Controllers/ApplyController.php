@@ -7,6 +7,7 @@ use App\Models\School;
 use App\Models\SiteSetting;
 use App\Services\ActivityLogger;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ApplyController extends Controller
@@ -26,30 +27,47 @@ class ApplyController extends Controller
         $data = $request->validated();
         $teacher = $request->user()->teacher;
 
+        $existing = $teacher
+            ? $school->applications()->where('teacher_id', $teacher->id)->first()
+            : null;
+
         $file = $request->file('cv');
         $storedName = Str::uuid()->toString().'.'.$file->getClientOriginalExtension();
         $path = $file->storeAs("cvs/{$school->id}", $storedName, 'local');
 
-        $application = $school->applications()->create([
-            'teacher_id' => $teacher?->id,
+        if ($existing && $existing->cv_path) {
+            Storage::disk('local')->delete($existing->cv_path);
+        }
+
+        $attributes = [
             'applicant_name' => $request->user()->name,
             'applicant_email' => $request->user()->email,
             'applicant_phone' => $teacher?->phone,
             'message' => $data['message'] ?? null,
             'cv_path' => $path,
             'cv_original_name' => $file->getClientOriginalName(),
-        ]);
+            'viewed_at' => null,
+        ];
+
+        if ($existing) {
+            $existing->update($attributes);
+            $application = $existing;
+        } else {
+            $application = $school->applications()->create($attributes + ['teacher_id' => $teacher?->id]);
+        }
 
         ActivityLogger::log(
-            'application.submitted',
-            "New application from {$application->applicant_name} for {$school->name}",
+            $existing ? 'application.updated' : 'application.submitted',
+            ($existing ? 'Updated application from ' : 'New application from ')."{$application->applicant_name} for {$school->name}",
             $school,
             ['application_id' => $application->id],
             route('admin.applications.index', ['school' => $school->id])
         );
 
         return response()->json([
-            'message' => 'Your application has been submitted successfully.',
+            'message' => $existing
+                ? 'Your application has been updated successfully.'
+                : 'Your application has been submitted successfully.',
         ]);
     }
 }
