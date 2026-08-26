@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\TeacherController as AdminTeacherController;
 use App\Http\Controllers\ApplyController;
 use App\Http\Controllers\Auth\TeacherAuthController;
 use App\Http\Controllers\Auth\TeacherRegisteredController;
+use App\Http\Controllers\GuestAccessController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\School\ApplicationController as SchoolApplicationController;
@@ -26,8 +27,10 @@ use App\Http\Controllers\School\ProgramController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])
-    ->middleware(['auth', 'school.active', 'teacher.active'])
+    ->middleware(['guest_or_auth', 'school.active', 'teacher.active'])
     ->name('home');
+
+Route::get('/guest/{token}', [GuestAccessController::class, 'enter'])->name('guest.enter');
 
 Route::post('/apply/{school:slug}', [ApplyController::class, 'store'])
     ->middleware(['auth', 'role:teacher', 'teacher.active'])
@@ -127,6 +130,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::get('/settings', [SettingsController::class, 'edit'])->name('settings.edit');
     Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');
+    Route::post('/guest-link/regenerate', [SettingsController::class, 'regenerateGuestLink'])->name('guest-link.regenerate');
 
     Route::get('/activity', [ActivityLogController::class, 'index'])->name('activity.index');
 

@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\EnsureUserHasRole::class,
             'school.active' => \App\Http\Middleware\EnsureSchoolActive::class,
             'teacher.active' => \App\Http\Middleware\EnsureTeacherActive::class,
+            'guest_or_auth' => \App\Http\Middleware\AllowGuestOrAuth::class,
         ]);
 
         $middleware->web(append: [

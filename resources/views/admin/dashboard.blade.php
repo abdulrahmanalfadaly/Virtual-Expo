@@ -284,5 +284,25 @@
                 <button class="rounded-full bg-indigo-600 px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 transition hover:bg-indigo-500">Save Settings</button>
             </div>
         </form>
+
+        <div class="mt-6 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
+            <h3 class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+                </svg>
+                Guest Access Link
+            </h3>
+            <p class="mt-1 text-xs text-gray-400">Anyone with this link can view the expo without registering — they just can't submit a CV. It works even while Dev Mode is on.</p>
+
+            <div class="mt-4 flex flex-wrap items-center gap-3">
+                <input id="guest-link-input" type="text" readonly value="{{ $guestLink }}" onclick="this.select()" class="min-w-0 flex-1 rounded-lg border-gray-300 bg-gray-50 font-mono text-sm text-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                <button type="button" onclick="navigator.clipboard.writeText(document.getElementById('guest-link-input').value); this.textContent='Copied!'; setTimeout(() => this.textContent='Copy', 1500);" class="rounded-full bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-200">Copy</button>
+            </div>
+
+            <form method="POST" action="{{ route('admin.guest-link.regenerate') }}" class="mt-4" onsubmit="return confirm('This invalidates the current guest link — anyone using the old one will lose access. Continue?')">
+                @csrf
+                <button class="rounded-full border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50">Regenerate Link</button>
+            </form>
+        </div>
     </div>
 </x-admin-layout>

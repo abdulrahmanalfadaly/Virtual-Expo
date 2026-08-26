@@ -8,6 +8,7 @@ use App\Models\SiteSetting;
 use App\Services\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class SettingsController extends Controller
 {
@@ -59,5 +60,14 @@ class SettingsController extends Controller
         ActivityLogger::log('admin.settings_updated', 'Admin updated general site settings');
 
         return back()->with('status', 'Settings updated.');
+    }
+
+    public function regenerateGuestLink(): RedirectResponse
+    {
+        SiteSetting::set('guest_link_token', Str::random(32));
+
+        ActivityLogger::log('admin.guest_link_regenerated', 'Admin regenerated the guest access link');
+
+        return back()->with('status', 'Guest link regenerated. The previous link no longer works.');
     }
 }

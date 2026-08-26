@@ -24,6 +24,7 @@ class CheckDevMode
         'confirm-password',
         'verify-email', 'verify-email/*',
         'email/verification-notification',
+        'guest/*',
     ];
 
     public function handle(Request $request, Closure $next): Response
@@ -32,7 +33,7 @@ class CheckDevMode
             return $next($request);
         }
 
-        if ($request->user()?->isAdmin()) {
+        if ($request->user()?->isAdmin() || $request->session()->get('guest_access')) {
             return $next($request);
         }
 
