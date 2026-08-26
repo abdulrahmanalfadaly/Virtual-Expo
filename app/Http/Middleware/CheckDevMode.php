@@ -35,11 +35,11 @@ class CheckDevMode
             return $next($request);
         }
 
-        if ($request->user()?->isAdmin() || $request->session()->get('guest_access')) {
+        if ($request->user()?->isAdmin()) {
             return $next($request);
         }
 
-        if (! $request->user()) {
+        if (! $request->user() && ! $request->session()->get('guest_access')) {
             return $next($request);
         }
 
