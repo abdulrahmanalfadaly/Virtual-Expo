@@ -16,28 +16,36 @@
 <body class="font-sans antialiased">
     @php
         $logoPath = \App\Models\SiteSetting::get('expo_logo_path');
-        $logoHeight = max((int) \App\Models\SiteSetting::get('nav_logo_height', 64), 56);
     @endphp
 
     <div class="hero-gradient relative flex min-h-screen items-center justify-center overflow-hidden px-6 text-center">
-        <div class="relative z-10 max-w-lg">
+        <div class="relative z-10 max-w-2xl">
             <div class="flex justify-center">
                 @if ($logoPath)
-                    <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($logoPath) }}" alt="Logo" style="height: {{ $logoHeight }}px;" class="w-auto object-contain drop-shadow-xl">
+                    <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($logoPath) }}" alt="Logo" class="h-28 w-auto object-contain drop-shadow-2xl sm:h-36 md:h-44">
                 @else
-                    <span class="flex items-center justify-center rounded-2xl bg-indigo-500 font-bold text-white shadow-xl" style="height: {{ $logoHeight }}px; width: {{ $logoHeight }}px; font-size: {{ $logoHeight * 0.35 }}px;">VE</span>
+                    <span class="flex h-28 w-28 items-center justify-center rounded-3xl bg-indigo-500 text-4xl font-bold text-white shadow-2xl sm:h-36 sm:w-36 sm:text-5xl md:h-44 md:w-44 md:text-6xl">VE</span>
                 @endif
             </div>
 
-            <h1 class="mt-8 font-display text-3xl font-semibold text-white sm:text-4xl">We'll be right back</h1>
-            <p class="mx-auto mt-4 max-w-md text-lg text-gray-300">{{ $message }}</p>
+            <p class="mx-auto mt-10 max-w-lg text-lg text-gray-300 sm:text-xl">{{ $message }}</p>
 
             @if ($endsAt)
-                <div class="mt-8 inline-flex items-center gap-2 rounded-full bg-white/10 px-5 py-2.5 text-sm font-medium text-gray-200 ring-1 ring-white/10" data-countdown="{{ \Illuminate\Support\Carbon::parse($endsAt)->toIso8601String() }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span data-countdown-text>Calculating...</span>
+                <div class="countdown-wrap mt-12 flex items-center justify-center gap-3 sm:gap-5" data-countdown="{{ \Illuminate\Support\Carbon::parse($endsAt)->toIso8601String() }}">
+                    <div class="flex flex-col items-center">
+                        <span class="countdown-digit flex h-20 w-20 items-center justify-center rounded-2xl bg-white/10 font-display text-3xl font-bold text-white ring-1 ring-white/15 backdrop-blur-sm sm:h-28 sm:w-28 sm:text-5xl md:h-32 md:w-32 md:text-6xl" data-unit="hours">00</span>
+                        <span class="mt-3 text-xs font-semibold uppercase tracking-widest text-gray-400 sm:text-sm">Hours</span>
+                    </div>
+                    <span class="countdown-colon font-display text-3xl font-bold text-indigo-400 sm:text-5xl md:text-6xl">:</span>
+                    <div class="flex flex-col items-center">
+                        <span class="countdown-digit flex h-20 w-20 items-center justify-center rounded-2xl bg-white/10 font-display text-3xl font-bold text-white ring-1 ring-white/15 backdrop-blur-sm sm:h-28 sm:w-28 sm:text-5xl md:h-32 md:w-32 md:text-6xl" data-unit="minutes">00</span>
+                        <span class="mt-3 text-xs font-semibold uppercase tracking-widest text-gray-400 sm:text-sm">Minutes</span>
+                    </div>
+                    <span class="countdown-colon font-display text-3xl font-bold text-indigo-400 sm:text-5xl md:text-6xl">:</span>
+                    <div class="flex flex-col items-center">
+                        <span class="countdown-digit flex h-20 w-20 items-center justify-center rounded-2xl bg-white/10 font-display text-3xl font-bold text-white ring-1 ring-white/15 backdrop-blur-sm sm:h-28 sm:w-28 sm:text-5xl md:h-32 md:w-32 md:text-6xl" data-unit="seconds">00</span>
+                        <span class="mt-3 text-xs font-semibold uppercase tracking-widest text-gray-400 sm:text-sm">Seconds</span>
+                    </div>
                 </div>
             @endif
         </div>
@@ -46,28 +54,41 @@
     @if ($endsAt)
         <script>
             (function () {
-                const el = document.querySelector('[data-countdown]');
-                if (! el) return;
+                const wrap = document.querySelector('.countdown-wrap');
+                if (! wrap) return;
 
-                const target = new Date(el.dataset.countdown).getTime();
-                const textEl = el.querySelector('[data-countdown-text]');
+                const target = new Date(wrap.dataset.countdown).getTime();
+                const digits = {
+                    hours: wrap.querySelector('[data-unit="hours"]'),
+                    minutes: wrap.querySelector('[data-unit="minutes"]'),
+                    seconds: wrap.querySelector('[data-unit="seconds"]'),
+                };
+                const previous = { hours: null, minutes: null, seconds: null };
+
+                function setDigit(el, value, key) {
+                    const text = String(value).padStart(2, '0');
+                    if (previous[key] === text) return;
+                    previous[key] = text;
+                    el.textContent = text;
+                    el.classList.remove('countdown-pulse');
+                    void el.offsetWidth;
+                    el.classList.add('countdown-pulse');
+                }
 
                 function tick() {
                     const diff = target - Date.now();
 
                     if (diff <= 0) {
-                        textEl.textContent = 'Back any moment now...';
+                        setDigit(digits.hours, 0, 'hours');
+                        setDigit(digits.minutes, 0, 'minutes');
+                        setDigit(digits.seconds, 0, 'seconds');
                         window.location.reload();
                         return;
                     }
 
-                    const h = Math.floor(diff / 3600000);
-                    const m = Math.floor((diff % 3600000) / 60000);
-                    const s = Math.floor((diff % 60000) / 1000);
-                    textEl.textContent = 'Back in '
-                        + String(h).padStart(2, '0') + ':'
-                        + String(m).padStart(2, '0') + ':'
-                        + String(s).padStart(2, '0');
+                    setDigit(digits.hours, Math.floor(diff / 3600000), 'hours');
+                    setDigit(digits.minutes, Math.floor((diff % 3600000) / 60000), 'minutes');
+                    setDigit(digits.seconds, Math.floor((diff % 60000) / 1000), 'seconds');
                 }
 
                 tick();

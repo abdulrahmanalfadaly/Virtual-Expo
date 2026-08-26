@@ -10,9 +10,25 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CheckDevMode
 {
+    /**
+     * Paths that stay reachable during Dev Mode — the full authentication
+     * journey (register, log in, verify, reset a password, log out) always
+     * has to work. Dev Mode only gates the app itself, which a user reaches
+     * *after* finishing one of these.
+     */
+    private const EXEMPT_PATHS = [
+        'login', 'register', 'logout',
+        'teacher/login', 'teacher/register',
+        'forgot-password',
+        'reset-password', 'reset-password/*',
+        'confirm-password',
+        'verify-email', 'verify-email/*',
+        'email/verification-notification',
+    ];
+
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->is('admin/*') || $request->is('up')) {
+        if ($request->is('admin/*') || $request->is('up') || $request->is(self::EXEMPT_PATHS)) {
             return $next($request);
         }
 
