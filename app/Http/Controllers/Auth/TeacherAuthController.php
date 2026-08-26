@@ -23,7 +23,7 @@ class TeacherAuthController extends Controller
 
         if (! Auth::attempt($credentials)) {
             throw \Illuminate\Validation\ValidationException::withMessages([
-                'email' => 'These credentials do not match our records.',
+                'email' => __('These credentials do not match our records.'),
             ]);
         }
 
@@ -33,7 +33,7 @@ class TeacherAuthController extends Controller
             Auth::logout();
 
             throw \Illuminate\Validation\ValidationException::withMessages([
-                'email' => 'This is a school account. Please switch to the School tab to log in.',
+                'email' => __('This is a school account. Please switch to the School tab to log in.'),
             ]);
         }
 
@@ -41,7 +41,7 @@ class TeacherAuthController extends Controller
             Auth::logout();
 
             throw \Illuminate\Validation\ValidationException::withMessages([
-                'email' => 'These credentials do not match our records.',
+                'email' => __('These credentials do not match our records.'),
             ]);
         }
 
@@ -49,7 +49,7 @@ class TeacherAuthController extends Controller
             Auth::logout();
 
             throw \Illuminate\Validation\ValidationException::withMessages([
-                'email' => 'Your account has been suspended. Please contact the administrator.',
+                'email' => __('Your account has been suspended. Please contact the administrator.'),
             ]);
         }
 

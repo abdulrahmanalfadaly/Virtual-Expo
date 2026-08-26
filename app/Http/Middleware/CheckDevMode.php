@@ -26,6 +26,7 @@ class CheckDevMode
         'email/verification-notification',
         'guest/*',
         'school', 'school/*',
+        'lang/*',
     ];
 
     public function handle(Request $request, Closure $next): Response
@@ -35,6 +36,10 @@ class CheckDevMode
         }
 
         if ($request->user()?->isAdmin() || $request->session()->get('guest_access')) {
+            return $next($request);
+        }
+
+        if (! $request->user()) {
             return $next($request);
         }
 

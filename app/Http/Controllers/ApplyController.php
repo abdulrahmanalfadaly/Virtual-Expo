@@ -20,7 +20,7 @@ class ApplyController extends Controller
 
         if (! SiteSetting::get('allow_applications', true)) {
             return response()->json([
-                'message' => 'Applications are currently closed.',
+                'message' => __('Applications are currently closed.'),
             ], 403);
         }
 
@@ -66,8 +66,8 @@ class ApplyController extends Controller
 
         return response()->json([
             'message' => $existing
-                ? 'Your application has been updated successfully.'
-                : 'Your application has been submitted successfully.',
+                ? __('Your application has been updated successfully.')
+                : __('Your application has been submitted successfully.'),
         ]);
     }
 }

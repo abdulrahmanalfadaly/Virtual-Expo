@@ -35,6 +35,11 @@
             @if ($endsAt)
                 <div class="countdown-wrap mt-12 flex items-center justify-center gap-3 sm:gap-5" data-countdown="{{ \Illuminate\Support\Carbon::parse($endsAt)->toIso8601String() }}">
                     <div class="flex flex-col items-center">
+                        <span class="countdown-digit flex h-20 w-20 items-center justify-center rounded-2xl bg-white/10 font-display text-3xl font-bold text-white ring-1 ring-white/15 backdrop-blur-sm sm:h-28 sm:w-28 sm:text-5xl md:h-32 md:w-32 md:text-6xl" data-unit="days">00</span>
+                        <span class="mt-3 text-xs font-semibold uppercase tracking-widest text-gray-400 sm:text-sm">Days</span>
+                    </div>
+                    <span class="countdown-colon font-display text-3xl font-bold text-indigo-400 sm:text-5xl md:text-6xl">:</span>
+                    <div class="flex flex-col items-center">
                         <span class="countdown-digit flex h-20 w-20 items-center justify-center rounded-2xl bg-white/10 font-display text-3xl font-bold text-white ring-1 ring-white/15 backdrop-blur-sm sm:h-28 sm:w-28 sm:text-5xl md:h-32 md:w-32 md:text-6xl" data-unit="hours">00</span>
                         <span class="mt-3 text-xs font-semibold uppercase tracking-widest text-gray-400 sm:text-sm">Hours</span>
                     </div>
@@ -78,11 +83,12 @@
 
                 const target = new Date(wrap.dataset.countdown).getTime();
                 const digits = {
+                    days: wrap.querySelector('[data-unit="days"]'),
                     hours: wrap.querySelector('[data-unit="hours"]'),
                     minutes: wrap.querySelector('[data-unit="minutes"]'),
                     seconds: wrap.querySelector('[data-unit="seconds"]'),
                 };
-                const previous = { hours: null, minutes: null, seconds: null };
+                const previous = { days: null, hours: null, minutes: null, seconds: null };
 
                 function setDigit(el, value, key) {
                     const text = String(value).padStart(2, '0');
@@ -98,6 +104,7 @@
                     const diff = target - Date.now();
 
                     if (diff <= 0) {
+                        setDigit(digits.days, 0, 'days');
                         setDigit(digits.hours, 0, 'hours');
                         setDigit(digits.minutes, 0, 'minutes');
                         setDigit(digits.seconds, 0, 'seconds');
@@ -105,7 +112,8 @@
                         return;
                     }
 
-                    setDigit(digits.hours, Math.floor(diff / 3600000), 'hours');
+                    setDigit(digits.days, Math.floor(diff / 86400000), 'days');
+                    setDigit(digits.hours, Math.floor((diff % 86400000) / 3600000), 'hours');
                     setDigit(digits.minutes, Math.floor((diff % 3600000) / 60000), 'minutes');
                     setDigit(digits.seconds, Math.floor((diff % 60000) / 1000), 'seconds');
                 }

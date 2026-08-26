@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}" class="scroll-smooth">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,7 +15,7 @@
     @include('partials.social-meta')
 
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700|fraunces:500,600,700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700|fraunces:500,600,700|cairo:400,500,600,700&display=swap" rel="stylesheet" />
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -35,20 +35,21 @@
                     <span class="flex items-center justify-center rounded-lg bg-indigo-500 font-bold text-white" style="height: {{ $navLogoHeight }}px; width: {{ $navLogoHeight }}px; font-size: {{ max(10, $navLogoHeight * 0.35) }}px;">VE</span>
                 @endif
                 @if ($content['show_site_name_in_nav'] ?? true)
-                    <span class="site-nav-title pl-3 font-display text-lg font-semibold text-white">
+                    <span class="site-nav-title ps-3 font-display text-lg font-semibold text-white">
                         {{ $content['site_name'] ?? 'Virtual School Expo' }}
                     </span>
                 @endif
             </a>
 
             <div class="hidden items-center gap-8 text-sm font-medium text-gray-200 md:flex">
-                <a href="#top" class="site-nav-link transition hover:text-white">Home</a>
-                <a href="#about" class="site-nav-link transition hover:text-white">About</a>
-                <a href="#schools" class="site-nav-link transition hover:text-white">Schools</a>
-                <a href="#contact" class="site-nav-link transition hover:text-white">Contact</a>
+                <a href="#top" class="site-nav-link transition hover:text-white">{{ __('Home') }}</a>
+                <a href="#about" class="site-nav-link transition hover:text-white">{{ __('About') }}</a>
+                <a href="#schools" class="site-nav-link transition hover:text-white">{{ __('Schools') }}</a>
+                <a href="#contact" class="site-nav-link transition hover:text-white">{{ __('Contact') }}</a>
             </div>
 
             <div class="flex items-center gap-3">
+                <x-lang-switcher />
                 @auth
                     @php
                         $navUser = auth()->user();
@@ -60,7 +61,7 @@
                         $navUserName = $navUser->isSchool() ? ($navUser->school->name ?? $navUser->name) : $navUser->name;
                         $navInitials = \Illuminate\Support\Str::of($navUserName)->explode(' ')->map(fn ($w) => mb_substr($w, 0, 1))->take(2)->implode('');
                     @endphp
-                    <a href="{{ $dashboardRoute }}" class="flex items-center gap-2 rounded-full bg-white py-1.5 pl-1.5 pr-4 text-sm font-semibold text-gray-900 shadow transition hover:bg-gray-100">
+                    <a href="{{ $dashboardRoute }}" class="flex items-center gap-2 rounded-full bg-white py-1.5 ps-1.5 pe-4 text-sm font-semibold text-gray-900 shadow transition hover:bg-gray-100">
                         <span class="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-500 text-xs font-bold uppercase text-white">{{ $navInitials }}</span>
                         <span class="max-w-[10rem] truncate">{{ $navUserName }}</span>
                     </a>
@@ -74,16 +75,16 @@
                     </form>
                 @else
                     <a href="{{ route('login') }}" class="rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow transition hover:bg-gray-100">
-                        Login
+                        {{ __('Login') }}
                     </a>
                 @endauth
             </div>
         </nav>
 
         <div class="flex justify-center gap-6 border-t border-white/10 py-2 text-xs font-medium text-gray-300 md:hidden">
-            <a href="#about" class="site-nav-link">About</a>
-            <a href="#schools" class="site-nav-link">Schools</a>
-            <a href="#contact" class="site-nav-link">Contact</a>
+            <a href="#about" class="site-nav-link">{{ __('About') }}</a>
+            <a href="#schools" class="site-nav-link">{{ __('Schools') }}</a>
+            <a href="#contact" class="site-nav-link">{{ __('Contact') }}</a>
         </div>
     </header>
 
@@ -99,7 +100,7 @@
                     @endif
                 </div>
 
-                <div class="text-center lg:text-left">
+                <div class="text-center lg:text-start">
                     <h1 class="font-display text-4xl font-semibold leading-tight text-white sm:text-6xl">
                         {{ $content['hero_headline'] ?? 'Discover Your Future School' }}
                     </h1>
@@ -108,7 +109,7 @@
                     @endif
                     <div class="mt-10 flex flex-wrap items-center justify-center gap-4 lg:justify-start">
                         <a href="#schools" class="rounded-full bg-indigo-500 px-7 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/30 transition hover:bg-indigo-400">
-                            Explore Booths
+                            {{ __('Explore Booths') }}
                         </a>
                     </div>
                 </div>
@@ -123,7 +124,7 @@
 
         <section id="about" class="bg-white py-24">
             <div class="mx-auto max-w-3xl px-6 text-center">
-                <h2 class="font-display text-3xl font-semibold text-gray-900 sm:text-4xl">About the Expo</h2>
+                <h2 class="font-display text-3xl font-semibold text-gray-900 sm:text-4xl">{{ __('About the Expo') }}</h2>
                 @if (! empty($content['about_content']))
                     <p class="mt-6 whitespace-pre-line text-lg leading-relaxed text-gray-600">{{ $content['about_content'] }}</p>
                 @endif
@@ -136,11 +137,11 @@
                     <h2 class="site-schools-heading font-display text-4xl font-bold tracking-tight text-white sm:text-6xl">
                         {{ $content['schools_heading_prefix'] ?? 'Welcome to the' }} <span class="site-gradient-text bg-gradient-to-r from-indigo-300 to-pink-300 bg-clip-text text-transparent">{{ $content['schools_heading_highlight'] ?? 'Virtual School Expo' }}</span>
                     </h2>
-                    <p class="site-schools-subtitle mt-4 text-gray-200">Click on any booth to explore programs, media, and get in touch directly.</p>
+                    <p class="site-schools-subtitle mt-4 text-gray-200">{{ __('Click on any booth to explore programs, media, and get in touch directly.') }}</p>
                 </div>
 
                 @if ($schools->isEmpty())
-                    <p class="site-schools-empty mt-16 text-center text-gray-500">No school booths are published yet. Please check back soon.</p>
+                    <p class="site-schools-empty mt-16 text-center text-gray-500">{{ __('No school booths are published yet. Please check back soon.') }}</p>
                 @else
                     <div class="booth-grid mx-auto mt-20"
                          style="--booth-cols: {{ $boothGrid['booth_grid_columns'] ?? 2 }}; --booth-gap: {{ $boothGrid['booth_grid_gap'] ?? 2.5 }}rem;">
@@ -154,20 +155,20 @@
 
         <section id="contact" class="bg-white py-24">
             <div class="mx-auto max-w-3xl px-6 text-center">
-                <h2 class="font-display text-3xl font-semibold text-gray-900 sm:text-4xl">Contact &amp; Support</h2>
+                <h2 class="font-display text-3xl font-semibold text-gray-900 sm:text-4xl">{{ __('Contact & Support') }}</h2>
                 @if (! empty($content['support_info']))
                     <p class="mt-4 text-gray-600">{{ $content['support_info'] }}</p>
                 @endif
                 <div class="mt-8 grid gap-4 text-sm text-gray-700 sm:grid-cols-2">
                     @if (! empty($content['contact_email']))
                         <div class="rounded-xl bg-gray-50 p-5">
-                            <p class="font-semibold text-gray-900">Email</p>
+                            <p class="font-semibold text-gray-900">{{ __('Email') }}</p>
                             <a href="mailto:{{ $content['contact_email'] }}" class="mt-1 block text-indigo-600 hover:underline">{{ $content['contact_email'] }}</a>
                         </div>
                     @endif
                     @if (! empty($content['contact_phone']))
                         <div class="rounded-xl bg-gray-50 p-5">
-                            <p class="font-semibold text-gray-900">Phone / WhatsApp</p>
+                            <p class="font-semibold text-gray-900">{{ __('Phone / WhatsApp') }}</p>
                             <p class="mt-1">{{ $content['contact_phone'] }}</p>
                         </div>
                     @endif
@@ -177,7 +178,7 @@
     </main>
 
     <footer class="bg-gray-950 py-10 text-center text-sm text-gray-400">
-        <p>{{ $content['footer_text'] ?? '© '.date('Y').' Virtual School Expo. All rights reserved.' }}</p>
+        <p>{{ $content['footer_text'] ?? '© '.date('Y').' '.__('Virtual School Expo. All rights reserved.') }}</p>
     </footer>
 
     @foreach ($schools as $school)

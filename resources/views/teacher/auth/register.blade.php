@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <h2 class="mb-6 text-center text-xl font-semibold text-gray-900 dark:text-white">Register as a Teacher</h2>
+    <h2 class="mb-6 text-center text-xl font-semibold text-gray-900 dark:text-white">{{ __('Register as a Teacher') }}</h2>
 
     <form method="POST" action="{{ route('teacher.register.store') }}">
         @csrf
@@ -46,9 +46,9 @@
     </form>
 
     <div class="mt-6 border-t border-gray-600 pt-6 text-center text-sm text-gray-600 dark:border-gray-700 dark:text-gray-400">
-        Registering a school instead?
+        {{ __('Registering a school instead?') }}
         <a href="{{ route('register') }}" class="font-bold text-gray-600 underline dark:text-gray-200">
-            Register your school
+            {{ __('Register your school') }}
         </a>
     </div>
 </x-guest-layout>

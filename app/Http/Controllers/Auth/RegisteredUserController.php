@@ -23,7 +23,7 @@ class RegisteredUserController extends Controller
     {
         if (! SiteSetting::get('allow_registration', true)) {
             return redirect()->route('home')->withErrors([
-                'registration' => 'School registration is currently closed. Please contact the administrator.',
+                'registration' => __('School registration is currently closed. Please contact the administrator.'),
             ]);
         }
 
@@ -36,7 +36,7 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         if (! SiteSetting::get('allow_registration', true)) {
-            abort(403, 'Registration is currently closed.');
+            abort(403, __('Registration is currently closed.'));
         }
 
         $data = $request->validate([

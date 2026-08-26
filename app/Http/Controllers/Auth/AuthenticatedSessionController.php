@@ -26,7 +26,7 @@ class AuthenticatedSessionController extends Controller
             Auth::logout();
 
             return redirect()->route('login')->withInput()->withErrors([
-                'email' => 'Please use the admin login page.',
+                'email' => __('Please use the admin login page.'),
             ]);
         }
 
@@ -34,7 +34,7 @@ class AuthenticatedSessionController extends Controller
             Auth::logout();
 
             return redirect()->route('login')->withInput()->withErrors([
-                'email' => 'This is a teacher account. Please switch to the Teacher tab to log in.',
+                'email' => __('This is a teacher account. Please switch to the Teacher tab to log in.'),
             ]);
         }
 
@@ -42,7 +42,7 @@ class AuthenticatedSessionController extends Controller
             Auth::logout();
 
             return redirect()->route('login')->withInput()->withErrors([
-                'email' => 'Your school account has been suspended. Please contact the administrator.',
+                'email' => __('Your school account has been suspended. Please contact the administrator.'),
             ]);
         }
 

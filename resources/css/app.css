@@ -16,6 +16,12 @@
     font-family: 'Fraunces', ui-serif, Georgia, serif;
 }
 
+[dir='rtl'] body,
+[dir='rtl'] .font-sans,
+[dir='rtl'] .font-display {
+    font-family: 'Cairo', ui-sans-serif, system-ui, sans-serif;
+}
+
 .hero-gradient {
     position: relative;
 }

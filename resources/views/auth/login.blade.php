@@ -13,23 +13,23 @@
          x-init="$nextTick(() => setHeight()); $watch('tab', () => $nextTick(() => setHeight()))"
          x-cloak>
         <h2 class="mb-6 text-center text-xl font-semibold text-gray-900 dark:text-white"
-            x-text="tab === 'teacher' ? 'Teacher Login' : 'School Login'">
-            {{ $initialTab === 'school' ? 'School Login' : 'Teacher Login' }}
+            x-text="tab === 'teacher' ? '{{ __('Teacher Login') }}' : '{{ __('School Login') }}'">
+            {{ $initialTab === 'school' ? __('School Login') : __('Teacher Login') }}
         </h2>
 
-        <div class="relative mx-auto mb-8 flex rounded-full bg-gray-900/60 p-1 ring-1 ring-white/10">
+        <div dir="ltr" class="relative mx-auto mb-8 flex rounded-full bg-gray-900/60 p-1 ring-1 ring-white/10">
             <span class="absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-full bg-indigo-600 shadow transition-transform duration-300 ease-out"
                   :class="tab === 'school' ? 'translate-x-full' : 'translate-x-0'"></span>
 
             <button type="button" @click="tab = 'teacher'"
                     class="relative z-10 flex-1 rounded-full py-2.5 text-sm font-semibold transition-colors duration-300"
                     :class="tab === 'teacher' ? 'text-white' : 'text-gray-400 hover:text-gray-200'">
-                Teacher
+                {{ __('Teacher') }}
             </button>
             <button type="button" @click="tab = 'school'"
                     class="relative z-10 flex-1 rounded-full py-2.5 text-sm font-semibold transition-colors duration-300"
                     :class="tab === 'school' ? 'text-white' : 'text-gray-400 hover:text-gray-200'">
-                School
+                {{ __('School') }}
             </button>
         </div>
 
@@ -69,9 +69,9 @@
                 </form>
 
                 <div class="mt-6 border-t border-gray-600 pt-6 text-center text-sm text-gray-600 dark:border-gray-700 dark:text-gray-400">
-                    New teacher?
+                    {{ __('New teacher?') }}
                     <a href="{{ route('teacher.register') }}" class="font-bold text-gray-600 underline dark:text-gray-200">
-                        Register
+                        {{ __('Register') }}
                     </a>
                 </div>
             </div>
@@ -122,9 +122,9 @@
                 </form>
 
                 <div class="mt-6 border-t border-gray-600 pt-6 text-center text-sm text-gray-600 dark:border-gray-700 dark:text-gray-400">
-                    New school?
+                    {{ __('New school?') }}
                     <a href="{{ route('register') }}" class="font-bold text-gray-600 underline dark:text-gray-200">
-                        Register
+                        {{ __('Register') }}
                     </a>
                 </div>
             </div>

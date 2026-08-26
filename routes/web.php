@@ -32,6 +32,14 @@ Route::get('/', [HomeController::class, 'index'])
 
 Route::get('/guest/{token}', [GuestAccessController::class, 'enter'])->name('guest.enter');
 
+Route::get('/lang/{locale}', function (\Illuminate\Http\Request $request, string $locale) {
+    if (in_array($locale, ['en', 'ar'], true)) {
+        $request->session()->put('locale', $locale);
+    }
+
+    return back();
+})->name('lang.switch');
+
 Route::post('/apply/{school:slug}', [ApplyController::class, 'store'])
     ->middleware(['auth', 'role:teacher', 'teacher.active'])
     ->name('apply.store');

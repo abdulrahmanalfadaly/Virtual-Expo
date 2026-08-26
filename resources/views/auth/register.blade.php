@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <h2 class="mb-6 text-center text-xl font-semibold text-gray-900 dark:text-white">Register Your School</h2>
+    <h2 class="mb-6 text-center text-xl font-semibold text-gray-900 dark:text-white">{{ __('Register Your School') }}</h2>
 
     <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data">
         @csrf
@@ -19,10 +19,10 @@
         <div class="mt-4">
             <x-input-label for="school_type" :value="__('School Type')" />
             <select id="school_type" name="school_type" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-300">
-                <option value="" disabled selected>Select a type</option>
-                <option value="national" @selected(old('school_type') === 'national')>National</option>
-                <option value="international" @selected(old('school_type') === 'international')>International</option>
-                <option value="online" @selected(old('school_type') === 'online')>Online</option>
+                <option value="" disabled selected>{{ __('Select a type') }}</option>
+                <option value="national" @selected(old('school_type') === 'national')>{{ __('National') }}</option>
+                <option value="international" @selected(old('school_type') === 'international')>{{ __('International') }}</option>
+                <option value="online" @selected(old('school_type') === 'online')>{{ __('Online') }}</option>
             </select>
             <x-input-error :messages="$errors->get('school_type')" class="mt-2" />
         </div>
@@ -81,9 +81,9 @@
     </form>
 
     <div class="mt-6 border-t border-gray-600 pt-6 text-center text-sm text-gray-600 dark:border-gray-700 dark:text-gray-400">
-        Are you a teacher?
+        {{ __('Are you a teacher?') }}
         <a href="{{ route('teacher.register') }}" class="font-bold text-gray-600 underline dark:text-gray-200">
-            Register as a teacher
+            {{ __('Register as a teacher') }}
         </a>
     </div>
 </x-guest-layout>
