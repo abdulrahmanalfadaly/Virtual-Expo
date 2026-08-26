@@ -19,16 +19,18 @@
     @endphp
 
     <div class="hero-gradient relative flex min-h-screen items-center justify-center overflow-hidden px-6 text-center">
-        <div class="relative z-10 max-w-2xl">
-            <div class="flex justify-center">
-                @if ($logoPath)
-                    <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($logoPath) }}" alt="Logo" class="h-28 w-auto object-contain drop-shadow-2xl sm:h-36 md:h-44">
-                @else
-                    <span class="flex h-28 w-28 items-center justify-center rounded-3xl bg-indigo-500 text-4xl font-bold text-white shadow-2xl sm:h-36 sm:w-36 sm:text-5xl md:h-44 md:w-44 md:text-6xl">VE</span>
-                @endif
-            </div>
+        <div class="relative z-10 w-full max-w-4xl">
+            <div class="flex flex-col items-center gap-8 sm:flex-row sm:items-center sm:text-left">
+                <div class="shrink-0">
+                    @if ($logoPath)
+                        <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($logoPath) }}" alt="Logo" class="h-24 w-auto rounded-2xl object-contain shadow-2xl sm:h-32 md:h-40">
+                    @else
+                        <span class="flex h-24 w-24 items-center justify-center rounded-2xl bg-indigo-500 text-3xl font-bold text-white shadow-2xl sm:h-32 sm:w-32 sm:text-4xl md:h-40 md:w-40 md:text-5xl">VE</span>
+                    @endif
+                </div>
 
-            <p class="mx-auto mt-10 max-w-lg text-lg text-gray-300 sm:text-xl">{{ $message }}</p>
+                <p class="max-w-xl text-2xl font-medium leading-snug text-white sm:text-3xl">{{ $message }}</p>
+            </div>
 
             @if ($endsAt)
                 <div class="countdown-wrap mt-12 flex items-center justify-center gap-3 sm:gap-5" data-countdown="{{ \Illuminate\Support\Carbon::parse($endsAt)->toIso8601String() }}">

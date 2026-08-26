@@ -243,9 +243,6 @@
                 </div>
             </div>
 
-            @php
-                $devModeEndsAt = old('dev_mode_ends_at', $settings['dev_mode_ends_at'] ? \Illuminate\Support\Carbon::parse($settings['dev_mode_ends_at'])->format('Y-m-d\TH:i') : '');
-            @endphp
             <div class="rounded-2xl border-2 border-amber-200 bg-amber-50/40 p-6 shadow-sm">
                 <h3 class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-amber-700">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
@@ -275,10 +272,38 @@
 
                 <div class="mt-5 border-t border-amber-100 pt-5">
                     <label class="block text-sm font-medium text-gray-700">Auto-disable At (optional)</label>
-                    <p class="text-xs text-gray-400">Dev Mode turns itself off automatically once this time passes. Leave blank to keep it on until you disable it manually.</p>
-                    <input type="datetime-local" name="dev_mode_ends_at" value="{{ $devModeEndsAt }}" class="mt-2 w-full max-w-xs rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    <p class="text-xs text-gray-400">Dev Mode turns itself off automatically once this time passes, in your own local time. Leave blank to keep it on until you disable it manually.</p>
+                    <input type="datetime-local" id="dev_mode_ends_at_local" class="mt-2 w-full max-w-xs rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    <input type="hidden" name="dev_mode_ends_at" id="dev_mode_ends_at_hidden" value="{{ old('dev_mode_ends_at', $settings['dev_mode_ends_at']) }}">
                 </div>
             </div>
+
+            <script>
+                (function () {
+                    const hidden = document.getElementById('dev_mode_ends_at_hidden');
+                    const local = document.getElementById('dev_mode_ends_at_local');
+                    if (! hidden || ! local) return;
+
+                    const pad = (n) => String(n).padStart(2, '0');
+
+                    function toLocalInputValue(isoString) {
+                        const d = new Date(isoString);
+                        if (isNaN(d.getTime())) return '';
+                        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+                    }
+
+                    function syncHiddenFromLocal() {
+                        hidden.value = local.value ? new Date(local.value).toISOString() : '';
+                    }
+
+                    if (hidden.value) {
+                        local.value = toLocalInputValue(hidden.value);
+                    }
+
+                    local.addEventListener('input', syncHiddenFromLocal);
+                    local.closest('form')?.addEventListener('submit', syncHiddenFromLocal);
+                })();
+            </script>
 
             <div class="flex justify-end">
                 <button class="rounded-full bg-indigo-600 px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 transition hover:bg-indigo-500">Save Settings</button>
