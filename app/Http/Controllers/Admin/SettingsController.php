@@ -25,6 +25,9 @@ class SettingsController extends Controller
             'require_admin_approval' => $request->boolean('require_admin_approval'),
             'show_site_name_in_nav' => $request->boolean('show_site_name_in_nav'),
             'nav_logo_height' => $request->validated('nav_logo_height'),
+            'dev_mode_enabled' => $request->boolean('dev_mode_enabled'),
+            'dev_mode_message' => $request->validated('dev_mode_message'),
+            'dev_mode_ends_at' => $request->validated('dev_mode_ends_at'),
         ];
 
         if ($request->hasFile('link_preview_image')) {
@@ -43,7 +46,15 @@ class SettingsController extends Controller
             $data['expo_logo_path'] = $request->file('expo_logo')->store('site', 'public');
         }
 
+        $wasDevMode = SiteSetting::get('dev_mode_enabled', false);
+
         SiteSetting::setMany($data);
+
+        if ($data['dev_mode_enabled'] && ! $wasDevMode) {
+            ActivityLogger::log('admin.dev_mode_enabled', 'Admin enabled Dev Mode'.($data['dev_mode_ends_at'] ? ' until '.$data['dev_mode_ends_at'] : ''));
+        } elseif (! $data['dev_mode_enabled'] && $wasDevMode) {
+            ActivityLogger::log('admin.dev_mode_disabled', 'Admin disabled Dev Mode');
+        }
 
         ActivityLogger::log('admin.settings_updated', 'Admin updated general site settings');
 

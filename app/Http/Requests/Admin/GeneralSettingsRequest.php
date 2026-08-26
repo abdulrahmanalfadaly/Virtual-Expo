@@ -22,6 +22,9 @@ class GeneralSettingsRequest extends FormRequest
             'expo_logo' => ['nullable', 'image', 'max:2048'],
             'show_site_name_in_nav' => ['nullable', 'boolean'],
             'nav_logo_height' => ['required', 'integer', 'min:1'],
+            'dev_mode_enabled' => ['nullable', 'boolean'],
+            'dev_mode_message' => ['nullable', 'string', 'max:2000'],
+            'dev_mode_ends_at' => ['nullable', 'date'],
         ];
     }
 }

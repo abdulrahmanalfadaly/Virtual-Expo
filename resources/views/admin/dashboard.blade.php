@@ -243,6 +243,43 @@
                 </div>
             </div>
 
+            @php
+                $devModeEndsAt = old('dev_mode_ends_at', $settings['dev_mode_ends_at'] ? \Illuminate\Support\Carbon::parse($settings['dev_mode_ends_at'])->format('Y-m-d\TH:i') : '');
+            @endphp
+            <div class="rounded-2xl border-2 border-amber-200 bg-amber-50/40 p-6 shadow-sm">
+                <h3 class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-amber-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                    </svg>
+                    Maintenance / Dev Mode
+                </h3>
+                <p class="mt-1 text-xs text-amber-700/70">Takes the entire public site offline for everyone except admins.</p>
+
+                <div class="mt-5 flex items-center justify-between gap-4">
+                    <div>
+                        <p class="text-sm font-medium text-gray-900">Enable Dev Mode</p>
+                        <p class="text-xs text-gray-500">Teachers, schools, and visitors will see a maintenance page instead of the site. Admins are unaffected.</p>
+                    </div>
+                    <label class="relative inline-flex shrink-0 cursor-pointer items-center">
+                        <input type="checkbox" name="dev_mode_enabled" value="1" @checked(old('dev_mode_enabled', $settings['dev_mode_enabled'] ?? false)) class="peer sr-only">
+                        <div class="h-6 w-11 rounded-full bg-gray-200 transition-colors peer-checked:bg-amber-500"></div>
+                        <div class="absolute left-1 top-1 h-4 w-4 rounded-full bg-white shadow transition-transform peer-checked:translate-x-5"></div>
+                    </label>
+                </div>
+
+                <div class="mt-5 border-t border-amber-100 pt-5">
+                    <label class="block text-sm font-medium text-gray-700">Custom Message (optional)</label>
+                    <p class="text-xs text-gray-400">Shown to visitors on the maintenance page. Leave blank to use the default message.</p>
+                    <textarea name="dev_mode_message" rows="3" placeholder="We're making some updates behind the scenes. Please check back soon." class="mt-2 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('dev_mode_message', $settings['dev_mode_message']) }}</textarea>
+                </div>
+
+                <div class="mt-5 border-t border-amber-100 pt-5">
+                    <label class="block text-sm font-medium text-gray-700">Auto-disable At (optional)</label>
+                    <p class="text-xs text-gray-400">Dev Mode turns itself off automatically once this time passes. Leave blank to keep it on until you disable it manually.</p>
+                    <input type="datetime-local" name="dev_mode_ends_at" value="{{ $devModeEndsAt }}" class="mt-2 w-full max-w-xs rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                </div>
+            </div>
+
             <div class="flex justify-end">
                 <button class="rounded-full bg-indigo-600 px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 transition hover:bg-indigo-500">Save Settings</button>
             </div>

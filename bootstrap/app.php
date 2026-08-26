@@ -18,6 +18,21 @@ return Application::configure(basePath: dirname(__DIR__))
             'teacher.active' => \App\Http\Middleware\EnsureTeacherActive::class,
         ]);
 
+        $middleware->web(append: [
+            \App\Http\Middleware\CheckDevMode::class,
+        ]);
+
+        // Laravel's middleware priority sorting runs the "auth" middleware before
+        // any custom middleware by default, regardless of group order. Dev Mode
+        // must run first so it can gate a page before "auth" ever redirects.
+        // Note: the priority list anchors on the AuthenticatesRequests *contract*,
+        // not the concrete Authenticate class — anchoring on the concrete class
+        // silently no-ops the prepend (falls through to appending at the end).
+        $middleware->prependToPriorityList(
+            before: \Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests::class,
+            prepend: \App\Http\Middleware\CheckDevMode::class,
+        );
+
         $middleware->redirectGuestsTo(function ($request) {
             if ($request->is('admin/*')) {
                 return route('admin.login');
