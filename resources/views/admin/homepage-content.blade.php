@@ -9,10 +9,14 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Hero Headline</label>
                     <input type="text" name="hero_headline" value="{{ old('hero_headline', $settings['hero_headline']) }}" required class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    <label class="mt-2 block text-xs font-medium text-gray-400">Arabic (optional)</label>
+                    <input type="text" dir="rtl" name="hero_headline_ar" value="{{ old('hero_headline_ar', $settings['hero_headline_ar'] ?? '') }}" class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Hero Description</label>
                     <textarea name="hero_description" rows="3" class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('hero_description', $settings['hero_description']) }}</textarea>
+                    <label class="mt-2 block text-xs font-medium text-gray-400">Arabic (optional)</label>
+                    <textarea dir="rtl" name="hero_description_ar" rows="3" class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('hero_description_ar', $settings['hero_description_ar'] ?? '') }}</textarea>
                 </div>
                 <div>
                     <div class="flex items-center justify-between">
@@ -40,10 +44,14 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Text</label>
                     <input type="text" name="schools_heading_prefix" value="{{ old('schools_heading_prefix', $settings['schools_heading_prefix'] ?? 'Welcome to the') }}" class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    <label class="mt-2 block text-xs font-medium text-gray-400">Arabic (optional)</label>
+                    <input type="text" dir="rtl" name="schools_heading_prefix_ar" value="{{ old('schools_heading_prefix_ar', $settings['schools_heading_prefix_ar'] ?? '') }}" class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Highlighted Text</label>
                     <input type="text" name="schools_heading_highlight" value="{{ old('schools_heading_highlight', $settings['schools_heading_highlight'] ?? 'Virtual School Expo') }}" class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    <label class="mt-2 block text-xs font-medium text-gray-400">Arabic (optional)</label>
+                    <input type="text" dir="rtl" name="schools_heading_highlight_ar" value="{{ old('schools_heading_highlight_ar', $settings['schools_heading_highlight_ar'] ?? '') }}" class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                 </div>
             </div>
         </div>
@@ -51,6 +59,8 @@
         <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
             <h2 class="text-base font-semibold text-gray-900">About Section</h2>
             <textarea name="about_content" rows="5" class="mt-4 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('about_content', $settings['about_content']) }}</textarea>
+            <label class="mt-2 block text-xs font-medium text-gray-400">Arabic (optional)</label>
+            <textarea dir="rtl" name="about_content_ar" rows="5" class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('about_content_ar', $settings['about_content_ar'] ?? '') }}</textarea>
         </div>
 
         <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
@@ -67,10 +77,14 @@
                 <div class="sm:col-span-2">
                     <label class="block text-sm font-medium text-gray-700">Address</label>
                     <input type="text" name="contact_address" value="{{ old('contact_address', $settings['contact_address']) }}" class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    <label class="mt-2 block text-xs font-medium text-gray-400">Arabic (optional)</label>
+                    <input type="text" dir="rtl" name="contact_address_ar" value="{{ old('contact_address_ar', $settings['contact_address_ar'] ?? '') }}" class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                 </div>
                 <div class="sm:col-span-2">
                     <label class="block text-sm font-medium text-gray-700">Support Info</label>
                     <textarea name="support_info" rows="2" class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('support_info', $settings['support_info']) }}</textarea>
+                    <label class="mt-2 block text-xs font-medium text-gray-400">Arabic (optional)</label>
+                    <textarea dir="rtl" name="support_info_ar" rows="2" class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('support_info_ar', $settings['support_info_ar'] ?? '') }}</textarea>
                 </div>
             </div>
         </div>
@@ -78,6 +92,8 @@
         <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
             <h2 class="text-base font-semibold text-gray-900">Footer</h2>
             <input type="text" name="footer_text" value="{{ old('footer_text', $settings['footer_text']) }}" class="mt-4 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+            <label class="mt-2 block text-xs font-medium text-gray-400">Arabic (optional)</label>
+            <input type="text" dir="rtl" name="footer_text_ar" value="{{ old('footer_text_ar', $settings['footer_text_ar'] ?? '') }}" class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
         </div>
 
         <button class="rounded-full bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white shadow hover:bg-indigo-500">Save Homepage Content</button>

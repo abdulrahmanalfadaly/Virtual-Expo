@@ -33,11 +33,13 @@ Route::get('/', [HomeController::class, 'index'])
 Route::get('/guest/{token}', [GuestAccessController::class, 'enter'])->name('guest.enter');
 
 Route::get('/lang/{locale}', function (\Illuminate\Http\Request $request, string $locale) {
+    $redirect = back();
+
     if (in_array($locale, ['en', 'ar'], true)) {
-        $request->session()->put('locale', $locale);
+        $redirect->cookie('locale', $locale, 60 * 24 * 365);
     }
 
-    return back();
+    return $redirect;
 })->name('lang.switch');
 
 Route::post('/apply/{school:slug}', [ApplyController::class, 'store'])

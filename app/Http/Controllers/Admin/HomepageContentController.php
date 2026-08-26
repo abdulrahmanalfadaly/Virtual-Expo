@@ -13,10 +13,15 @@ use Illuminate\View\View;
 class HomepageContentController extends Controller
 {
     private const KEYS = [
-        'hero_headline', 'hero_description', 'about_content',
-        'contact_email', 'contact_phone', 'contact_address', 'support_info',
-        'footer_text', 'site_background_path',
-        'hero_overlay_opacity', 'schools_heading_prefix', 'schools_heading_highlight',
+        'hero_headline', 'hero_headline_ar',
+        'hero_description', 'hero_description_ar',
+        'about_content', 'about_content_ar',
+        'contact_email', 'contact_phone', 'contact_address', 'contact_address_ar',
+        'support_info', 'support_info_ar',
+        'footer_text', 'footer_text_ar', 'site_background_path',
+        'hero_overlay_opacity',
+        'schools_heading_prefix', 'schools_heading_prefix_ar',
+        'schools_heading_highlight', 'schools_heading_highlight_ar',
     ];
 
     public function edit(): View

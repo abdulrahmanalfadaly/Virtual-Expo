@@ -24,16 +24,26 @@ class HomeController extends Controller
             ? $teacher->applications()->pluck('created_at', 'school_id')
             : collect();
 
+        $localizedKeys = [
+            'hero_headline', 'hero_description', 'about_content',
+            'contact_address', 'support_info', 'footer_text', 'site_name',
+            'schools_heading_prefix', 'schools_heading_highlight',
+        ];
+
+        $content = SiteSetting::getMany([
+            'contact_email', 'contact_phone',
+            'expo_logo_path', 'site_background_path',
+            'hero_overlay_opacity', 'show_site_name_in_nav', 'nav_logo_height',
+        ]);
+
+        foreach ($localizedKeys as $key) {
+            $content[$key] = SiteSetting::getLocalized($key);
+        }
+
         return view('home', [
             'schools' => $schools,
             'existingApplications' => $existingApplications,
-            'content' => SiteSetting::getMany([
-                'hero_headline', 'hero_description', 'about_content',
-                'contact_email', 'contact_phone', 'contact_address', 'support_info',
-                'footer_text', 'expo_logo_path', 'site_name', 'site_background_path',
-                'hero_overlay_opacity', 'schools_heading_prefix', 'schools_heading_highlight',
-                'show_site_name_in_nav', 'nav_logo_height',
-            ]),
+            'content' => $content,
             'boothSettings' => SiteSetting::getMany([
                 'booth_template_path', 'booth_logo_x',
                 'booth_logo_y', 'booth_logo_width', 'booth_logo_max_height',

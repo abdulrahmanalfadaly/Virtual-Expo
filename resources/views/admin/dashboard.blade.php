@@ -146,6 +146,8 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Site / Expo Name</label>
                             <input type="text" name="site_name" value="{{ old('site_name', $settings['site_name']) }}" required class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            <label class="mt-2 block text-xs font-medium text-gray-400">Arabic (optional)</label>
+                            <input type="text" dir="rtl" name="site_name_ar" value="{{ old('site_name_ar', $settings['site_name_ar'] ?? '') }}" class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                         </div>
 
                         <div class="flex items-center justify-between gap-4 border-t border-gray-100 pt-5">

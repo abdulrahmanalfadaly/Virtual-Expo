@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="refresh" content="60">
 
-    <title>{{ \App\Models\SiteSetting::get('site_name', 'Virtual School Expo') }}</title>
+    <title>{{ \App\Models\SiteSetting::getLocalized('site_name', 'Virtual School Expo') }}</title>
     @include('partials.favicon')
 
     <link rel="preconnect" href="https://fonts.bunny.net">

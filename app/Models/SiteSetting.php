@@ -29,6 +29,26 @@ class SiteSetting extends Model
         return collect($keys)->mapWithKeys(fn ($key) => [$key => static::get($key)])->all();
     }
 
+    /**
+     * Like get(), but for admin-authored content that can have a per-locale
+     * variant stored under "{$key}_{$locale}". Falls back to the base key
+     * when no locale, or an empty one, was set for the current locale.
+     */
+    public static function getLocalized(string $key, mixed $default = null): mixed
+    {
+        $locale = app()->getLocale();
+
+        if ($locale !== 'en') {
+            $localized = static::get("{$key}_{$locale}");
+
+            if (filled($localized)) {
+                return $localized;
+            }
+        }
+
+        return static::get($key, $default);
+    }
+
     public static function setMany(array $values): void
     {
         foreach ($values as $key => $value) {

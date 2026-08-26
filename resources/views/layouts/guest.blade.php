@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ \App\Models\SiteSetting::get('site_name', 'Virtual School Expo') }}</title>
+        <title>{{ \App\Models\SiteSetting::getLocalized('site_name', 'Virtual School Expo') }}</title>
         @include('partials.favicon')
         @include('partials.social-meta')
 
@@ -20,7 +20,7 @@
                 <div class="flex items-center justify-between gap-4 border-b border-white/10 px-6 py-5">
                     @php
                         $expoLogoPath = \App\Models\SiteSetting::get('expo_logo_path');
-                        $siteName = \App\Models\SiteSetting::get('site_name', 'Virtual School Expo');
+                        $siteName = \App\Models\SiteSetting::getLocalized('site_name', 'Virtual School Expo');
                         $navLogoHeight = \App\Models\SiteSetting::get('nav_logo_height', 48);
                         $showSiteName = \App\Models\SiteSetting::get('show_site_name_in_nav', true);
                     @endphp
