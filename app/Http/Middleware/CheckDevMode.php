@@ -25,6 +25,7 @@ class CheckDevMode
         'verify-email', 'verify-email/*',
         'email/verification-notification',
         'guest/*',
+        'school', 'school/*',
     ];
 
     public function handle(Request $request, Closure $next): Response

@@ -50,6 +50,23 @@
                     </div>
                 </div>
             @endif
+
+            @auth
+                <div class="mt-10 flex justify-center">
+                    @if (auth()->user()->isSchool())
+                        <a href="{{ route('school.dashboard') }}" class="rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 shadow-lg transition hover:bg-gray-100">
+                            Go to Dashboard
+                        </a>
+                    @else
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="text-sm font-medium text-gray-400 underline-offset-4 transition hover:text-white hover:underline">
+                                Sign out
+                            </button>
+                        </form>
+                    @endif
+                </div>
+            @endauth
         </div>
     </div>
 
