@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\PasswordResetRequestController;
 use App\Http\Controllers\Admin\ProgramController as AdminProgramController;
 use App\Http\Controllers\Admin\SchoolController as AdminSchoolController;
 use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\TeacherActivityController;
 use App\Http\Controllers\Admin\TeacherController as AdminTeacherController;
 use App\Http\Controllers\ApplyController;
 use App\Http\Controllers\Auth\TeacherAuthController;
@@ -141,6 +142,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/settings', [SettingsController::class, 'edit'])->name('settings.edit');
     Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');
     Route::post('/guest-link/regenerate', [SettingsController::class, 'regenerateGuestLink'])->name('guest-link.regenerate');
+
+    Route::get('/teacher-activity', [TeacherActivityController::class, 'index'])->name('teacher-activity.index');
 
     Route::get('/activity', [ActivityLogController::class, 'index'])->name('activity.index');
 

@@ -87,6 +87,8 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
+        $user->recordLogin($request->ip(), $request->userAgent());
+
         ActivityLogger::log(
             'school.registered',
             "New school registered: {$user->school->name}".($requiresApproval ? ' (pending admin approval)' : ''),

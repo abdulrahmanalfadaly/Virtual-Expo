@@ -55,6 +55,8 @@ class TeacherRegisteredController extends Controller
 
         Auth::login($user);
 
+        $user->recordLogin($request->ip(), $request->userAgent());
+
         ActivityLogger::log('teacher.registered', "New teacher registered: {$user->name}");
 
         return redirect(route('home', absolute: false));

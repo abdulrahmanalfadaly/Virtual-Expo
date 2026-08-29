@@ -48,6 +48,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        $user->recordLogin($request->ip(), $request->userAgent());
+
         return redirect()->intended(route('school.dashboard', absolute: false));
     }
 

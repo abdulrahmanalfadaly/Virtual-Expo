@@ -38,6 +38,8 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
+        Auth::user()->recordLogin($request->ip(), $request->userAgent());
+
         return redirect()->intended(route('admin.dashboard'));
     }
 

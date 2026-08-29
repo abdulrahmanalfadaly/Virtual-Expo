@@ -42,6 +42,7 @@
                         ['route' => 'admin.dashboard', 'label' => 'Dashboard'],
                         ['route' => 'admin.schools.index', 'label' => 'Schools'],
                         ['route' => 'admin.teachers.index', 'label' => 'Teachers'],
+                        ['route' => 'admin.teacher-activity.index', 'label' => 'Teacher Activity'],
                         ['route' => 'admin.applications.index', 'label' => 'Applications'],
                         ['route' => 'admin.homepage.edit', 'label' => 'Homepage Content'],
                         ['route' => 'admin.booth-settings.edit', 'label' => 'Booth Settings'],

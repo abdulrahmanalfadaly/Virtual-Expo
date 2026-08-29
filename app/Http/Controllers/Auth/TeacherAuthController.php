@@ -55,6 +55,8 @@ class TeacherAuthController extends Controller
 
         $request->session()->regenerate();
 
+        $user->recordLogin($request->ip(), $request->userAgent());
+
         return redirect()->intended(route('home', absolute: false));
     }
 }
