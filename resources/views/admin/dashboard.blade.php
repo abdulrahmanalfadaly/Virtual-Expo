@@ -256,37 +256,19 @@
             <div class="rounded-2xl border-2 border-indigo-200 bg-indigo-50/40 p-6 shadow-sm">
                 <h3 class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-indigo-700">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    Expo Schedule
+                    Reporting Timezone
                 </h3>
-                <p class="mt-1 text-xs text-indigo-700/70">Defines the event window the Teacher Activity dashboard reports against. The expo runs round the clock — each day counts as a full 24 hours.</p>
+                <p class="mt-1 text-xs text-indigo-700/70">Every date and time across the admin area is displayed and filtered in this zone.</p>
 
-                <div class="mt-5 grid gap-5 sm:grid-cols-2">
-                    <div class="sm:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700">Timezone</label>
-                        <p class="text-xs text-gray-400">Every date and time across the admin area is shown in this zone.</p>
-                        @php $currentTz = old('expo_timezone', $settings['expo_timezone'] ?? 'Asia/Kuala_Lumpur'); @endphp
-                        <select name="expo_timezone" class="mt-2 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            @foreach (timezone_identifiers_list() as $tz)
-                                <option value="{{ $tz }}" @selected($currentTz === $tz)>{{ $tz }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">First day</label>
-                        <p class="text-xs text-gray-400">The expo's opening date.</p>
-                        <input type="date" name="expo_start_date"
-                               value="{{ old('expo_start_date', $settings['expo_start_date'] ?? '') }}"
-                               class="mt-2 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Duration (days)</label>
-                        <p class="text-xs text-gray-400">How many days the expo runs for.</p>
-                        <input type="number" name="expo_days" min="1" max="60"
-                               value="{{ old('expo_days', $settings['expo_days'] ?? 3) }}"
-                               class="mt-2 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                    </div>
+                <div class="mt-5 max-w-sm">
+                    @php $currentTz = old('expo_timezone', $settings['expo_timezone'] ?? 'Asia/Kuala_Lumpur'); @endphp
+                    <select name="expo_timezone" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        @foreach (timezone_identifiers_list() as $tz)
+                            <option value="{{ $tz }}" @selected($currentTz === $tz)>{{ $tz }}</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
 

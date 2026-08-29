@@ -29,8 +29,6 @@ class SettingsController extends Controller
             'show_site_name_in_nav' => $request->boolean('show_site_name_in_nav'),
             'nav_logo_height' => $request->validated('nav_logo_height'),
             'expo_timezone' => $request->validated('expo_timezone') ?: 'Asia/Kuala_Lumpur',
-            'expo_start_date' => $request->validated('expo_start_date'),
-            'expo_days' => $request->validated('expo_days') ?: 3,
             'dev_mode_enabled' => $request->boolean('dev_mode_enabled'),
             'dev_mode_message' => $request->validated('dev_mode_message'),
             'dev_mode_ends_at' => $request->validated('dev_mode_ends_at'),

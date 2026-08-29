@@ -149,7 +149,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/guest-link/regenerate', [SettingsController::class, 'regenerateGuestLink'])->name('guest-link.regenerate');
 
     Route::get('/teacher-activity', [TeacherActivityController::class, 'index'])->name('teacher-activity.index');
-    Route::get('/teacher-activity/live', [TeacherActivityController::class, 'live'])->name('teacher-activity.live');
 
     Route::get('/activity', [ActivityLogController::class, 'index'])->name('activity.index');
 

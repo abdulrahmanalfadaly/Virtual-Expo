@@ -25,8 +25,6 @@ class GeneralSettingsRequest extends FormRequest
             'show_site_name_in_nav' => ['nullable', 'boolean'],
             'nav_logo_height' => ['required', 'integer', 'min:1'],
             'expo_timezone' => ['nullable', 'string', 'timezone'],
-            'expo_start_date' => ['nullable', 'date_format:Y-m-d'],
-            'expo_days' => ['nullable', 'integer', 'min:1', 'max:60'],
             'dev_mode_enabled' => ['nullable', 'boolean'],
             'dev_mode_message' => ['nullable', 'string', 'max:2000'],
             'dev_mode_ends_at' => ['nullable', 'date'],
