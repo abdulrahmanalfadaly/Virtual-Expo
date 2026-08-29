@@ -151,8 +151,20 @@
                         </div>
 
                         <div class="border-t border-gray-100 pt-5">
-                            <label class="block text-sm font-medium text-gray-700">Support WhatsApp Number</label>
-                            <p class="text-xs text-gray-400">Powers the floating WhatsApp help button shown to teachers and schools. Include the country code, e.g. +60177245793.</p>
+                            <div class="flex items-center justify-between gap-4">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900">Show WhatsApp Help Button</p>
+                                    <p class="text-xs text-gray-500">The floating WhatsApp button teachers and schools see on every page. Turn off to hide it from everyone.</p>
+                                </div>
+                                <label class="relative inline-flex shrink-0 cursor-pointer items-center">
+                                    <input type="checkbox" name="support_whatsapp_enabled" value="1" @checked(old('support_whatsapp_enabled', $settings['support_whatsapp_enabled'] ?? true)) class="peer sr-only">
+                                    <div class="h-6 w-11 rounded-full bg-gray-200 transition-colors peer-checked:bg-green-600"></div>
+                                    <div class="absolute left-1 top-1 h-4 w-4 rounded-full bg-white shadow transition-transform peer-checked:translate-x-5"></div>
+                                </label>
+                            </div>
+
+                            <label class="mt-4 block text-sm font-medium text-gray-700">Support WhatsApp Number</label>
+                            <p class="text-xs text-gray-400">Include the country code, e.g. +60177245793.</p>
                             <input type="text" name="support_whatsapp" placeholder="+60177245793"
                                    value="{{ old('support_whatsapp', $settings['support_whatsapp'] ?? '') }}"
                                    class="mt-2 w-full max-w-xs rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">

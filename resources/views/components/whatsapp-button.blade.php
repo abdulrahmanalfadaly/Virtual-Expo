@@ -1,4 +1,8 @@
 @php
+    // Admins can hide the button entirely; default to visible so existing
+    // installs are unaffected until the toggle is deliberately switched off.
+    $waEnabled = (bool) \App\Models\SiteSetting::get('support_whatsapp_enabled', true);
+
     // Falls back to the project's support number when the setting is unset, so
     // the button is never rendered pointing at nothing.
     $waRaw = \App\Models\SiteSetting::get('support_whatsapp') ?: '+60177245793';
@@ -7,7 +11,7 @@
     $waPrefill = __('Hi! I need help with :site', ['site' => $waSite]);
 @endphp
 
-@if ($waDigits !== '')
+@if ($waEnabled && $waDigits !== '')
     <a href="https://wa.me/{{ $waDigits }}?text={{ rawurlencode($waPrefill) }}"
        target="_blank"
        rel="noopener noreferrer"

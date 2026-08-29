@@ -17,6 +17,7 @@ class GeneralSettingsRequest extends FormRequest
             'site_name' => ['required', 'string', 'max:255'],
             'site_name_ar' => ['nullable', 'string', 'max:255'],
             'support_whatsapp' => ['nullable', 'string', 'max:32'],
+            'support_whatsapp_enabled' => ['nullable', 'boolean'],
             'allow_registration' => ['nullable', 'boolean'],
             'allow_applications' => ['nullable', 'boolean'],
             'require_admin_approval' => ['nullable', 'boolean'],
