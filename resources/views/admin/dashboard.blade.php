@@ -245,6 +245,34 @@
                 </div>
             </div>
 
+            <div class="rounded-2xl border-2 border-indigo-200 bg-indigo-50/40 p-6 shadow-sm">
+                <h3 class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-indigo-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                    </svg>
+                    Expo Schedule
+                </h3>
+                <p class="mt-1 text-xs text-indigo-700/70">Defines the event window that the Teacher Activity dashboard reports against.</p>
+
+                <div class="mt-5 grid gap-5 sm:grid-cols-2">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Expo starts at</label>
+                        <p class="text-xs text-gray-400">In your own local time.</p>
+                        <input type="datetime-local" id="expo_starts_at_local" data-utc-source="expo_starts_at_hidden"
+                               class="mt-2 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <input type="hidden" name="expo_starts_at" id="expo_starts_at_hidden"
+                               value="{{ old('expo_starts_at', $settings['expo_starts_at'] ?? '') }}">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Duration (days)</label>
+                        <p class="text-xs text-gray-400">How many days the expo runs for.</p>
+                        <input type="number" name="expo_days" min="1" max="60"
+                               value="{{ old('expo_days', $settings['expo_days'] ?? 3) }}"
+                               class="mt-2 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    </div>
+                </div>
+            </div>
+
             <div class="rounded-2xl border-2 border-amber-200 bg-amber-50/40 p-6 shadow-sm">
                 <h3 class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-amber-700">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
@@ -282,10 +310,6 @@
 
             <script>
                 (function () {
-                    const hidden = document.getElementById('dev_mode_ends_at_hidden');
-                    const local = document.getElementById('dev_mode_ends_at_local');
-                    if (! hidden || ! local) return;
-
                     const pad = (n) => String(n).padStart(2, '0');
 
                     function toLocalInputValue(isoString) {
@@ -294,16 +318,31 @@
                         return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
                     }
 
-                    function syncHiddenFromLocal() {
-                        hidden.value = local.value ? new Date(local.value).toISOString() : '';
-                    }
+                    // A datetime-local input submits a timezone-less wall-clock
+                    // string, which the server would read as UTC. Each visible
+                    // input therefore feeds a hidden field carrying a real UTC
+                    // instant, and is seeded back from it on load.
+                    const pairs = [
+                        ['dev_mode_ends_at_local', 'dev_mode_ends_at_hidden'],
+                        ['expo_starts_at_local', 'expo_starts_at_hidden'],
+                    ];
 
-                    if (hidden.value) {
-                        local.value = toLocalInputValue(hidden.value);
-                    }
+                    pairs.forEach(([localId, hiddenId]) => {
+                        const local = document.getElementById(localId);
+                        const hidden = document.getElementById(hiddenId);
+                        if (! local || ! hidden) return;
 
-                    local.addEventListener('input', syncHiddenFromLocal);
-                    local.closest('form')?.addEventListener('submit', syncHiddenFromLocal);
+                        const sync = () => {
+                            hidden.value = local.value ? new Date(local.value).toISOString() : '';
+                        };
+
+                        if (hidden.value) {
+                            local.value = toLocalInputValue(hidden.value);
+                        }
+
+                        local.addEventListener('input', sync);
+                        local.closest('form')?.addEventListener('submit', sync);
+                    });
                 })();
             </script>
 

@@ -27,6 +27,8 @@ class SettingsController extends Controller
             'require_admin_approval' => $request->boolean('require_admin_approval'),
             'show_site_name_in_nav' => $request->boolean('show_site_name_in_nav'),
             'nav_logo_height' => $request->validated('nav_logo_height'),
+            'expo_starts_at' => $request->validated('expo_starts_at'),
+            'expo_days' => $request->validated('expo_days') ?: 3,
             'dev_mode_enabled' => $request->boolean('dev_mode_enabled'),
             'dev_mode_message' => $request->validated('dev_mode_message'),
             'dev_mode_ends_at' => $request->validated('dev_mode_ends_at'),
