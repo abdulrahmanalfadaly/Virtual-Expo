@@ -123,5 +123,6 @@
             })();
         </script>
     @endif
+    <x-whatsapp-button />
 </body>
 </html>

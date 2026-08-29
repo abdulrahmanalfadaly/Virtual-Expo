@@ -31,7 +31,7 @@ class DashboardController extends Controller
             'totalApplications' => Application::count(),
             'recentSchools' => School::latest()->take(5)->get(),
             'recentActivity' => ActivityLog::with(['user', 'school'])->latest()->take(10)->get(),
-            'settings' => SiteSetting::getMany(['site_name', 'site_name_ar', 'allow_registration', 'allow_applications', 'require_admin_approval', 'link_preview_image_path', 'expo_logo_path', 'show_site_name_in_nav', 'nav_logo_height', 'expo_starts_at', 'expo_days', 'dev_mode_enabled', 'dev_mode_message', 'dev_mode_ends_at']),
+            'settings' => SiteSetting::getMany(['site_name', 'site_name_ar', 'support_whatsapp', 'allow_registration', 'allow_applications', 'require_admin_approval', 'link_preview_image_path', 'expo_logo_path', 'show_site_name_in_nav', 'nav_logo_height', 'expo_starts_at', 'expo_days', 'dev_mode_enabled', 'dev_mode_message', 'dev_mode_ends_at']),
             'guestLink' => route('guest.enter', $guestToken),
         ]);
     }

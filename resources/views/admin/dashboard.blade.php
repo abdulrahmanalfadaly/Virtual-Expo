@@ -150,6 +150,14 @@
                             <input type="text" dir="rtl" name="site_name_ar" value="{{ old('site_name_ar', $settings['site_name_ar'] ?? '') }}" class="mt-1 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                         </div>
 
+                        <div class="border-t border-gray-100 pt-5">
+                            <label class="block text-sm font-medium text-gray-700">Support WhatsApp Number</label>
+                            <p class="text-xs text-gray-400">Powers the floating WhatsApp help button shown to teachers and schools. Include the country code, e.g. +60177245793.</p>
+                            <input type="text" name="support_whatsapp" placeholder="+60177245793"
+                                   value="{{ old('support_whatsapp', $settings['support_whatsapp'] ?? '') }}"
+                                   class="mt-2 w-full max-w-xs rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+
                         <div class="flex items-center justify-between gap-4 border-t border-gray-100 pt-5">
                             <div>
                                 <p class="text-sm font-medium text-gray-900">Show Site Name Next to Logo</p>

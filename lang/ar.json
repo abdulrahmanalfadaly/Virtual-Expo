@@ -12,7 +12,6 @@
     "Email": "البريد الإلكتروني",
     "Phone / WhatsApp": "الهاتف / واتساب",
     "Virtual School Expo. All rights reserved.": "المعرض الافتراضي للمدارس. جميع الحقوق محفوظة.",
-
     "Teacher Login": "تسجيل دخول المعلم",
     "School Login": "تسجيل دخول المدرسة",
     "Teacher": "معلم",
@@ -24,7 +23,6 @@
     "New teacher?": "معلم جديد؟",
     "Register": "تسجيل",
     "New school?": "مدرسة جديدة؟",
-
     "Full Name": "الاسم الكامل",
     "Phone Number": "رقم الهاتف",
     "Confirm Password": "تأكيد كلمة المرور",
@@ -32,7 +30,6 @@
     "Register as a Teacher": "التسجيل كمعلم",
     "Registering a school instead?": "تريد تسجيل مدرسة بدلاً من ذلك؟",
     "Register your school": "سجّل مدرستك",
-
     "School Name": "اسم المدرسة",
     "Contact Person Name": "اسم المسؤول",
     "School Type": "نوع المدرسة",
@@ -47,7 +44,6 @@
     "Online": "عن بُعد",
     "Are you a teacher?": "هل أنت معلم؟",
     "Register as a teacher": "التسجيل كمعلم",
-
     "Close": "إغلاق",
     "Applied — Update CV": "تم التقديم — تحديث السيرة الذاتية",
     "Submit Your CV": "أرسل سيرتك الذاتية",
@@ -66,19 +62,19 @@
     "Network error. Please try again.": "خطأ في الشبكة. يرجى المحاولة مرة أخرى.",
     "Update Application": "تحديث الطلب",
     "Submit Application": "إرسال الطلب",
-
     "Applications are currently closed.": "التقديمات مغلقة حاليًا.",
     "Your application has been updated successfully.": "تم تحديث طلبك بنجاح.",
     "Your application has been submitted successfully.": "تم إرسال طلبك بنجاح.",
-
     "These credentials do not match our records.": "بيانات الاعتماد هذه غير مطابقة لسجلاتنا.",
     "This is a school account. Please switch to the School tab to log in.": "هذا حساب مدرسة. يرجى التبديل إلى تبويب المدرسة لتسجيل الدخول.",
     "Your account has been suspended. Please contact the administrator.": "تم تعليق حسابك. يرجى التواصل مع المسؤول.",
-
     "Please use the admin login page.": "يرجى استخدام صفحة تسجيل دخول المسؤول.",
     "This is a teacher account. Please switch to the Teacher tab to log in.": "هذا حساب معلم. يرجى التبديل إلى تبويب المعلم لتسجيل الدخول.",
     "Your school account has been suspended. Please contact the administrator.": "تم تعليق حساب مدرستك. يرجى التواصل مع المسؤول.",
-
     "School registration is currently closed. Please contact the administrator.": "تسجيل المدارس مغلق حاليًا. يرجى التواصل مع المسؤول.",
-    "Registration is currently closed.": "التسجيل مغلق حاليًا."
+    "Registration is currently closed.": "التسجيل مغلق حاليًا.",
+    "Need help?": "تحتاج مساعدة؟",
+    "Chat on WhatsApp": "تواصل عبر واتساب",
+    "Need help? Chat with us on WhatsApp": "تحتاج مساعدة؟ تواصل معنا عبر واتساب",
+    "Hi! I need help with :site": "مرحبًا! أحتاج مساعدة بخصوص :site"
 }

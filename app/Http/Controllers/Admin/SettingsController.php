@@ -22,6 +22,7 @@ class SettingsController extends Controller
         $data = [
             'site_name' => $request->validated('site_name'),
             'site_name_ar' => $request->validated('site_name_ar'),
+            'support_whatsapp' => $request->validated('support_whatsapp'),
             'allow_registration' => $request->boolean('allow_registration'),
             'allow_applications' => $request->boolean('allow_applications'),
             'require_admin_approval' => $request->boolean('require_admin_approval'),

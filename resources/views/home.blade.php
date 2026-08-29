@@ -200,5 +200,6 @@
             document.getElementById('theme-icon-sun')?.classList.remove('hidden');
         }
     </script>
+    <x-whatsapp-button />
 </body>
 </html>
