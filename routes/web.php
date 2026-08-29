@@ -20,6 +20,7 @@ use App\Http\Controllers\Auth\TeacherRegisteredController;
 use App\Http\Controllers\GuestAccessController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SchoolLogoController;
 use App\Http\Controllers\School\ApplicationController as SchoolApplicationController;
 use App\Http\Controllers\School\BoothController;
 use App\Http\Controllers\School\DashboardController as SchoolDashboardController;
@@ -42,6 +43,10 @@ Route::get('/lang/{locale}', function (\Illuminate\Http\Request $request, string
 
     return $redirect;
 })->name('lang.switch');
+
+Route::get('/schools/{school}/logo/download', [SchoolLogoController::class, 'download'])
+    ->middleware('auth')
+    ->name('schools.logo.download');
 
 Route::post('/apply/{school:slug}', [ApplyController::class, 'store'])
     ->middleware(['auth', 'role:teacher', 'teacher.active'])

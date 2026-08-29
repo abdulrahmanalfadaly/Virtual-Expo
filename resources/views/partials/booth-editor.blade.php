@@ -33,8 +33,16 @@
             <div class="mt-4">
                 <label class="block text-sm font-medium text-gray-700">Logo</label>
                 @if ($school->logo_path)
-                    <div class="mt-1 mb-2">
-                        <img src="{{ $school->logoUrl() }}" alt="" class="h-14 w-14 rounded-lg object-contain ring-1 ring-gray-200">
+                    <div class="mt-1 mb-3 flex items-center gap-3">
+                        <img src="{{ $school->logoUrl() }}" alt="" class="h-14 w-14 shrink-0 rounded-lg object-contain ring-1 ring-gray-200">
+                        <a href="{{ route('schools.logo.download', $school) }}"
+                           class="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm transition hover:bg-gray-50"
+                           title="Download the current logo">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                            </svg>
+                            Download current logo
+                        </a>
                     </div>
                 @endif
                 <input type="file" name="logo" id="logo-input" accept="image/*" class="mt-1 w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
