@@ -6,147 +6,305 @@ use App\Models\SiteSetting;
 use Illuminate\Support\Carbon;
 
 /**
- * The expo is a short, fixed-length event rather than an always-on site, so
- * almost every activity figure is only meaningful relative to its window.
- * This wraps the two settings that define it and answers the questions the
- * dashboard actually asks: has it started, which day are we on, how long is
- * left.
+ * The expo runs continuously for a number of full calendar days. Every figure
+ * the dashboard reports is scoped to those days and expressed in the
+ * organiser's own timezone rather than the server's UTC clock.
  */
 class ExpoWindow
 {
     public function __construct(
-        public readonly ?Carbon $start,
+        public readonly string $timezone,
+        public readonly ?string $startDate,
         public readonly int $days,
     ) {}
 
     public static function current(): self
     {
-        $start = SiteSetting::get('expo_starts_at');
-        $days = (int) SiteSetting::get('expo_days', 3);
+        $settings = SiteSetting::getMany(['expo_timezone', 'expo_start_date', 'expo_days']);
+
+        $timezone = $settings['expo_timezone'] ?: config('app.timezone');
+
+        // A bad timezone string would throw deep inside Carbon on every page,
+        // so fall back rather than take the dashboard down.
+        if (! in_array($timezone, timezone_identifiers_list(), true)) {
+            $timezone = config('app.timezone');
+        }
 
         return new self(
-            $start ? Carbon::parse($start) : null,
-            max(1, $days ?: 3),
+            $timezone,
+            $settings['expo_start_date'] ?: null,
+            max(1, (int) ($settings['expo_days'] ?: 1)),
         );
     }
 
     public function isConfigured(): bool
     {
-        return $this->start !== null;
+        return $this->startDate !== null;
     }
 
-    public function end(): ?Carbon
+    /** "Now", as the organiser's wall clock reads it. */
+    public function now(): Carbon
     {
-        return $this->start?->copy()->addDays($this->days);
+        return Carbon::now($this->timezone);
     }
 
-    public function hasStarted(): bool
+    /** Re-express any instant in the expo's local timezone. */
+    public function local(\DateTimeInterface|string|null $value): ?Carbon
     {
-        return $this->isConfigured() && now()->greaterThanOrEqualTo($this->start);
+        if ($value === null) {
+            return null;
+        }
+
+        return Carbon::parse($value)->setTimezone($this->timezone);
     }
 
-    public function hasEnded(): bool
+    /**
+     * One full local day per expo day, midnight to midnight.
+     *
+     * @return array<int, array{day:int, start:Carbon, end:Carbon}>
+     */
+    public function sessions(): array
     {
-        $end = $this->end();
+        if (! $this->isConfigured()) {
+            return [];
+        }
 
-        return $end !== null && now()->greaterThan($end);
+        $out = [];
+
+        for ($i = 0; $i < $this->days; $i++) {
+            $start = Carbon::parse($this->startDate, $this->timezone)->startOfDay()->addDays($i);
+
+            $out[] = [
+                'day' => $i + 1,
+                'start' => $start,
+                'end' => $start->copy()->addDay(),
+            ];
+        }
+
+        return $out;
     }
 
-    public function isRunning(): bool
+    public function firstStart(): ?Carbon
+    {
+        $sessions = $this->sessions();
+
+        return $sessions ? $sessions[0]['start']->copy() : null;
+    }
+
+    public function lastEnd(): ?Carbon
+    {
+        $sessions = $this->sessions();
+
+        if (! $sessions) {
+            return null;
+        }
+
+        return $sessions[count($sessions) - 1]['end']->copy();
+    }
+
+    /** The expo day currently running. */
+    public function currentSession(): ?array
+    {
+        $now = $this->now();
+
+        foreach ($this->sessions() as $session) {
+            if ($now->greaterThanOrEqualTo($session['start']) && $now->lessThan($session['end'])) {
+                return $session;
+            }
+        }
+
+        return null;
+    }
+
+    /** The session belonging to today's local date. */
+    public function todaySession(): ?array
+    {
+        $today = $this->now()->toDateString();
+
+        foreach ($this->sessions() as $session) {
+            if ($session['start']->toDateString() === $today) {
+                return $session;
+            }
+        }
+
+        return null;
+    }
+
+    public function nextSession(): ?array
+    {
+        $now = $this->now();
+
+        foreach ($this->sessions() as $session) {
+            if ($session['start']->greaterThan($now)) {
+                return $session;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Days that have already begun, each clipped to the present moment — the
+     * exact spans "all time" should aggregate over.
+     *
+     * @return array<int, array{day:int, start:Carbon, end:Carbon}>
+     */
+    public function elapsedSessions(): array
+    {
+        $now = $this->now();
+        $out = [];
+
+        foreach ($this->sessions() as $session) {
+            if ($session['start']->greaterThan($now)) {
+                continue;
+            }
+
+            $out[] = [
+                'day' => $session['day'],
+                'start' => $session['start']->copy(),
+                'end' => $session['end']->greaterThan($now) ? $now->copy() : $session['end']->copy(),
+            ];
+        }
+
+        return $out;
+    }
+
+    /** The expo is live for its whole run — no daily closing time. */
+    public function isLive(): bool
     {
         return $this->hasStarted() && ! $this->hasEnded();
     }
 
-    /**
-     * Which day of the expo we're on, 1-based and clamped to the window.
-     */
+    public function hasStarted(): bool
+    {
+        $first = $this->firstStart();
+
+        return $first !== null && $this->now()->greaterThanOrEqualTo($first);
+    }
+
+    public function hasEnded(): bool
+    {
+        $last = $this->lastEnd();
+
+        return $last !== null && $this->now()->greaterThanOrEqualTo($last);
+    }
+
     public function currentDay(): ?int
     {
         if (! $this->hasStarted()) {
             return null;
         }
 
-        $day = (int) floor($this->start->diffInDays(now(), absolute: false)) + 1;
-
-        return max(1, min($this->days, $day));
-    }
-
-    /**
-     * Whole hours since the expo opened — the headline "how far in are we".
-     */
-    public function hoursElapsed(): int
-    {
-        if (! $this->hasStarted()) {
-            return 0;
+        if ($current = $this->currentSession()) {
+            return $current['day'];
         }
 
-        return (int) floor($this->start->diffInHours(now(), absolute: false));
+        $elapsed = $this->elapsedSessions();
+
+        return $elapsed ? $elapsed[count($elapsed) - 1]['day'] : null;
     }
 
-    public function minutesRemaining(): int
+    public function totalMinutes(): int
     {
-        $end = $this->end();
+        return $this->days * 1440;
+    }
 
-        if ($end === null || $this->hasEnded()) {
-            return 0;
+    public function elapsedMinutes(): int
+    {
+        $total = 0;
+
+        foreach ($this->elapsedSessions() as $session) {
+            $total += (int) round($session['start']->diffInMinutes($session['end'], absolute: true));
         }
 
-        return max(0, (int) ceil(now()->diffInMinutes($end, absolute: false)));
+        return $total;
+    }
+
+    public function remainingMinutes(): int
+    {
+        return max(0, $this->totalMinutes() - $this->elapsedMinutes());
     }
 
     public function progressPercent(): float
     {
-        if (! $this->hasStarted()) {
+        $total = $this->totalMinutes();
+
+        if ($total <= 0) {
             return 0.0;
         }
 
-        if ($this->hasEnded()) {
-            return 100.0;
-        }
-
-        $total = $this->start->diffInSeconds($this->end(), absolute: true);
-
-        if ($total <= 0) {
-            return 100.0;
-        }
-
-        return round(min(100, max(0, ($this->start->diffInSeconds(now(), absolute: true) / $total) * 100)), 1);
+        return round(min(100, max(0, ($this->elapsedMinutes() / $total) * 100)), 1);
     }
 
-    /**
-     * A short human status used in the dashboard header.
-     */
+    /** When the expo closes, or opens if it hasn't yet. */
+    public function boundaryTarget(): ?Carbon
+    {
+        if (! $this->isConfigured() || $this->hasEnded()) {
+            return null;
+        }
+
+        return $this->hasStarted() ? $this->lastEnd() : $this->firstStart();
+    }
+
     public function statusLabel(): string
     {
         if (! $this->isConfigured()) {
             return 'Not scheduled';
         }
 
-        if (! $this->hasStarted()) {
-            return 'Starts '.$this->start->diffForHumans();
-        }
-
         if ($this->hasEnded()) {
-            return 'Ended '.$this->end()->diffForHumans();
+            return 'Expo finished';
         }
 
-        return 'Live now';
+        if ($this->hasStarted()) {
+            return 'Live now';
+        }
+
+        return 'Not open yet';
+    }
+
+    /** A short timezone label for the UI, e.g. "GMT+8". */
+    public function timezoneLabel(): string
+    {
+        $offset = $this->now()->getOffset() / 3600;
+        $sign = $offset >= 0 ? '+' : '-';
+        $magnitude = rtrim(rtrim(number_format(abs($offset), 1, '.', ''), '0'), '.');
+
+        return 'GMT'.$sign.$magnitude;
+    }
+
+    /** Human summary of the schedule, e.g. "29 Aug – 1 Sep · round the clock". */
+    public function scheduleLabel(): string
+    {
+        if (! $this->isConfigured()) {
+            return '';
+        }
+
+        $first = $this->firstStart();
+        $last = $this->lastEnd()->copy()->subDay();
+
+        return $this->days === 1
+            ? $first->format('j M Y')
+            : $first->format('j M').' – '.$last->format('j M Y');
     }
 
     /**
-     * Start of each expo day, for day markers on an hourly chart.
+     * Constrain a query to a set of local windows, converting to UTC for the
+     * database. An empty set matches nothing rather than everything.
      */
-    public function dayBoundaries(): array
+    public function scopeToWindows($query, string $column, array $windows)
     {
-        if (! $this->isConfigured()) {
-            return [];
+        if (! $windows) {
+            return $query->whereRaw('1 = 0');
         }
 
-        return collect(range(0, $this->days - 1))
-            ->map(fn (int $i) => [
-                'day' => $i + 1,
-                'at' => $this->start->copy()->addDays($i),
-            ])
-            ->all();
+        return $query->where(function ($sub) use ($column, $windows) {
+            foreach ($windows as $window) {
+                $sub->orWhereBetween($column, [
+                    $window['start']->copy()->utc(),
+                    $window['end']->copy()->utc(),
+                ]);
+            }
+        });
     }
 }

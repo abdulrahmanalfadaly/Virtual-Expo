@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\Application;
+use App\Models\School;
 use App\Models\Teacher;
 use App\Models\User;
 use App\Support\ExpoWindow;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -17,334 +19,390 @@ class TeacherActivityController extends Controller
 {
     private const LOGIN_ACTION = 'teacher.logged_in';
 
-    private const ONLINE_MINUTES = 5;
-
     /**
-     * Time-series aggregates are cached briefly so a refresh (or several
-     * admins on the page at once) doesn't re-run the GROUP BYs. The live
-     * counters stay uncached so "online now" is always truthful.
+     * How recently a teacher must have been seen to count as "using the site
+     * right now". Paired with the one-minute write throttle in TrackLastSeen,
+     * this keeps the figure accurate to within about a minute.
      */
-    private const CACHE_SECONDS = 60;
+    private const ONLINE_MINUTES = 3;
+
+    private const CACHE_SECONDS = 45;
 
     public function index(Request $request): View
     {
         $expo = ExpoWindow::current();
         $range = $this->resolveRange($request->query('range'), $expo);
-        $accounts = $this->accountStats();
 
-        $cacheKey = 'teacher-activity:'.$range['key'].':'.$range['since']->timestamp;
-
-        return view('admin.teacher-activity', [
+        $data = [
             'expo' => $expo,
             'range' => $range,
             'rangeOptions' => $this->rangeOptions($expo),
             'onlineMinutes' => self::ONLINE_MINUTES,
-            'live' => $accounts['live'],
-            'buckets' => $accounts['buckets'],
-            'series' => Cache::remember(
-                $cacheKey.':series',
+            'onlineNow' => $this->onlineNow(),
+            'accounts' => $this->accountTotals(),
+        ];
+
+        if ($range['key'] !== 'live') {
+            $key = 'ta:'.$range['key'].':'.$this->windowSignature($range['windows']);
+
+            $data['metrics'] = Cache::remember(
+                $key.':m',
                 self::CACHE_SECONDS,
-                fn () => $this->timeSeries($range['since'], $range['until'], $range['granularity']),
-            ),
-            'hourly' => Cache::remember(
-                $cacheKey.':hourly',
+                fn () => $this->windowMetrics($range['windows']),
+            );
+        }
+
+        if ($range['showCharts']) {
+            $key = 'ta:'.$range['key'].':'.$this->windowSignature($range['windows']);
+
+            $data['series'] = Cache::remember(
+                $key.':s',
                 self::CACHE_SECONDS,
-                fn () => $this->hourlyDistribution($range['since'], $range['until']),
-            ),
-            'totals' => Cache::remember(
-                $cacheKey.':totals',
+                fn () => $this->loginSeries($expo, $range['windows'], $range['bucketMinutes']),
+            );
+
+            $data['timeOfDay'] = Cache::remember(
+                $key.':t',
                 self::CACHE_SECONDS,
-                fn () => $this->periodTotals($range['since'], $range['until']),
-            ),
-            'actionBreakdown' => Cache::remember(
-                $cacheKey.':actions',
-                self::CACHE_SECONDS,
-                fn () => $this->activityByType($range['since'], $range['until']),
-            ),
-            'preExpo' => Cache::remember(
-                'teacher-activity:pre-expo',
-                self::CACHE_SECONDS,
-                fn () => $this->preExpoSummary($expo),
-            ),
-            'topTeachers' => Cache::remember(
-                'teacher-activity:top',
+                fn () => $this->timeOfDay($expo, $range['windows']),
+            );
+
+            $data['topTeachers'] = Cache::remember(
+                'ta:top',
                 self::CACHE_SECONDS,
                 fn () => $this->topTeachers(),
-            ),
-            'recent' => $this->recentActivity(),
+            );
+
+            $data['recent'] = $this->recentActivity();
+
+            $data['highlights'] = Cache::remember(
+                'ta:highlights:'.$this->windowSignature($expo->elapsedSessions()),
+                self::CACHE_SECONDS,
+                fn () => $this->highlights($expo),
+            );
+        }
+
+        return view('admin.teacher-activity', $data);
+    }
+
+    /**
+     * Tiny polling endpoint behind the live counter — one indexed COUNT, no
+     * view rendering, so it can be hit every few seconds without cost.
+     */
+    public function live(): JsonResponse
+    {
+        $expo = ExpoWindow::current();
+
+        return response()->json([
+            'online' => $this->onlineNow(),
+            'total' => User::where('role', 'teacher')->count(),
+            'isLive' => $expo->isLive(),
+            'status' => $expo->statusLabel(),
+            'at' => $expo->now()->format('g:i:s A'),
         ]);
     }
 
-    /**
-     * The expo is three days long, so the useful windows are the event itself
-     * and the last day — not calendar months. "All time" reaches back over the
-     * setup period so nothing recorded before the doors opened is hidden.
-     */
     private function rangeOptions(ExpoWindow $expo): array
     {
-        $options = [];
-
-        if ($expo->isConfigured()) {
-            $options['expo'] = $expo->days.'-day expo';
-        }
-
-        $options['24h'] = 'Last 24 hours';
-        $options['all'] = 'All time';
-
-        return $options;
+        return [
+            'live' => [
+                'label' => 'Live',
+                'hint' => 'Who is on the site this second',
+            ],
+            '5min' => [
+                'label' => 'Last 5 minutes',
+                'hint' => 'The last few minutes of traffic',
+            ],
+            'hour' => [
+                'label' => 'Last hour',
+                'hint' => 'The past 60 minutes in detail',
+            ],
+            'today' => [
+                'label' => 'Today',
+                'hint' => $expo->isConfigured() ? 'Day '.($expo->currentDay() ?? '—').' · midnight to now' : 'Today, midnight to now',
+            ],
+            'all' => [
+                'label' => 'All time',
+                'hint' => 'The whole expo so far',
+            ],
+        ];
     }
 
+    /**
+     * Each range resolves to a set of local windows plus how much detail to
+     * render. "Live" carries no window at all — it is a single instant.
+     */
     private function resolveRange(?string $key, ExpoWindow $expo): array
     {
         $options = $this->rangeOptions($expo);
-        $key = array_key_exists((string) $key, $options) ? (string) $key : array_key_first($options);
+        $key = array_key_exists((string) $key, $options) ? (string) $key : 'live';
 
-        if ($key === 'expo' && $expo->isConfigured()) {
-            $since = $expo->start->copy();
-            $until = $expo->hasEnded() ? $expo->end() : now();
+        $now = $expo->now();
 
-            return [
-                'key' => 'expo',
-                'label' => $options['expo'],
-                'since' => $since,
-                'until' => $until,
-                // A 3-day window needs hour resolution; days would give 3 points.
-                'granularity' => 'hour',
-            ];
-        }
-
-        if ($key === '24h') {
-            return [
-                'key' => '24h',
-                'label' => $options['24h'],
-                'since' => now()->subDay()->startOfHour(),
-                'until' => now(),
-                'granularity' => 'hour',
-            ];
-        }
-
-        return [
-            'key' => 'all',
-            'label' => $options['all'],
-            'since' => $this->earliestRecord(),
-            'until' => now(),
-            'granularity' => 'day',
+        $base = [
+            'key' => $key,
+            'label' => $options[$key]['label'],
+            'hint' => $options[$key]['hint'],
+            'windows' => [],
+            'bucketMinutes' => 5,
+            'showCharts' => false,
+            'showAccountsShare' => false,
+            'showActive' => false,
         ];
+
+        return match ($key) {
+            'live' => $base,
+
+            '5min' => array_merge($base, [
+                'windows' => [['start' => $now->copy()->subMinutes(5), 'end' => $now->copy()]],
+                'showActive' => true,
+            ]),
+
+            'hour' => array_merge($base, [
+                'windows' => [['start' => $now->copy()->subHour(), 'end' => $now->copy()]],
+                'bucketMinutes' => 5,
+                'showCharts' => true,
+                'showActive' => true,
+            ]),
+
+            'today' => array_merge($base, [
+                'windows' => $this->todayWindows($expo),
+                'bucketMinutes' => 60,
+                'showCharts' => true,
+                'showAccountsShare' => true,
+            ]),
+
+            default => array_merge($base, [
+                'windows' => $expo->elapsedSessions(),
+                'bucketMinutes' => $this->bucketForSpan($expo->totalMinutes()),
+                'showCharts' => true,
+                'showAccountsShare' => true,
+            ]),
+        };
     }
 
     /**
-     * The first thing that ever happened on the site, so "all time" genuinely
-     * covers the pre-expo setup history rather than an arbitrary cutoff.
+     * Keep multi-day charts readable: the smallest round interval that fits
+     * the whole span into roughly four dozen points.
      */
-    private function earliestRecord(): Carbon
+    private function bucketForSpan(int $totalMinutes): int
     {
-        $earliestLog = ActivityLog::min('created_at');
-        $earliestUser = User::min('created_at');
+        foreach ([60, 120, 180, 240, 360, 720, 1440] as $interval) {
+            if ($totalMinutes / $interval <= 48) {
+                return $interval;
+            }
+        }
 
-        $candidates = array_filter([$earliestLog, $earliestUser]);
-
-        return $candidates
-            ? Carbon::parse(min($candidates))->startOfDay()
-            : now()->subDays(7)->startOfDay();
+        return 1440;
     }
 
-    /**
-     * Every teacher-account figure — headline counters and the mutually
-     * exclusive engagement bands — in two conditional aggregates.
-     */
-    private function accountStats(): array
+    /** Today's expo day so far, midnight to now; empty before it starts. */
+    private function todayWindows(ExpoWindow $expo): array
     {
-        $online = now()->subMinutes(self::ONLINE_MINUTES);
-        $startOfDay = now()->startOfDay();
-        $week = now()->subDays(7);
-        $month = now()->subDays(30);
+        $session = $expo->todaySession();
 
+        if (! $session) {
+            return [];
+        }
+
+        $now = $expo->now();
+
+        if ($session['start']->greaterThan($now)) {
+            return [];
+        }
+
+        return [[
+            'day' => $session['day'],
+            'start' => $session['start']->copy(),
+            'end' => $session['end']->greaterThan($now) ? $now->copy() : $session['end']->copy(),
+        ]];
+    }
+
+    private function windowSignature(array $windows): string
+    {
+        if (! $windows) {
+            return 'none';
+        }
+
+        $parts = array_map(
+            fn ($w) => $w['start']->timestamp.'-'.$w['end']->timestamp,
+            $windows,
+        );
+
+        return substr(md5(implode('|', $parts)), 0, 12);
+    }
+
+    private function onlineNow(): int
+    {
+        return User::where('role', 'teacher')
+            ->where('last_seen_at', '>=', now()->subMinutes(self::ONLINE_MINUTES))
+            ->count();
+    }
+
+    private function accountTotals(): array
+    {
         $u = User::where('role', 'teacher')
-            ->selectRaw('
-                COUNT(*) AS total,
-                SUM(CASE WHEN last_seen_at >= ? THEN 1 ELSE 0 END) AS online,
-                SUM(CASE WHEN last_login_at >= ? THEN 1 ELSE 0 END) AS today_logins,
-                SUM(CASE WHEN last_seen_at >= ? THEN 1 ELSE 0 END) AS week_seen,
-                SUM(CASE WHEN last_login_at IS NULL THEN 1 ELSE 0 END) AS never_logged_in,
-                SUM(CASE WHEN last_seen_at >= ? AND last_seen_at < ? THEN 1 ELSE 0 END) AS band_today,
-                SUM(CASE WHEN last_seen_at >= ? AND last_seen_at < ? THEN 1 ELSE 0 END) AS band_week,
-                SUM(CASE WHEN last_seen_at >= ? AND last_seen_at < ? THEN 1 ELSE 0 END) AS band_month,
-                SUM(CASE WHEN last_login_at IS NOT NULL AND (last_seen_at IS NULL OR last_seen_at < ?) THEN 1 ELSE 0 END) AS band_dormant
-            ', [
-                $online,
-                $startOfDay,
-                $week,
-                $startOfDay, $online,
-                $week, $startOfDay,
-                $month, $week,
-                $month,
-            ])
+            ->selectRaw('COUNT(*) AS total, SUM(CASE WHEN last_login_at IS NULL THEN 1 ELSE 0 END) AS never_logged_in')
             ->first();
 
-        $t = Teacher::selectRaw("
-                SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) AS active,
-                SUM(CASE WHEN status = 'suspended' THEN 1 ELSE 0 END) AS suspended
-            ")->first();
+        $total = (int) $u->total;
+        $never = (int) $u->never_logged_in;
 
         return [
-            'live' => [
-                'online' => (int) $u->online,
-                'today' => (int) $u->today_logins,
-                'week' => (int) $u->week_seen,
-                'total' => (int) $u->total,
-                'neverLoggedIn' => (int) $u->never_logged_in,
-                'activeAccounts' => (int) $t->active,
-                'suspended' => (int) $t->suspended,
-                'lastHourLogins' => ActivityLog::where('action', self::LOGIN_ACTION)
-                    ->where('created_at', '>=', now()->subHour())
-                    ->count(),
-            ],
-            'buckets' => [
-                ['key' => 'online', 'label' => 'Online now', 'count' => (int) $u->online],
-                ['key' => 'today', 'label' => 'Earlier today', 'count' => (int) $u->band_today],
-                ['key' => 'week', 'label' => 'This week', 'count' => (int) $u->band_week],
-                ['key' => 'month', 'label' => 'This month', 'count' => (int) $u->band_month],
-                ['key' => 'dormant', 'label' => 'Dormant (30d+)', 'count' => (int) $u->band_dormant],
-                ['key' => 'never', 'label' => 'Never logged in', 'count' => (int) $u->never_logged_in],
-            ],
+            'total' => $total,
+            'neverLoggedIn' => $never,
+            'neverPercent' => $total > 0 ? round($never / $total * 100) : 0,
+            'loggedInEver' => $total - $never,
+        ];
+    }
+
+    /** The four figures every windowed range reports. */
+    private function windowMetrics(array $windows): array
+    {
+        $expo = ExpoWindow::current();
+
+        $logins = $expo->scopeToWindows(
+            ActivityLog::where('action', self::LOGIN_ACTION),
+            'created_at',
+            $windows,
+        )->selectRaw('COUNT(*) AS total, COUNT(DISTINCT user_id) AS teachers')->first();
+
+        return [
+            'active' => $expo->scopeToWindows(
+                User::where('role', 'teacher'),
+                'last_seen_at',
+                $windows,
+            )->count(),
+            'logins' => (int) $logins->total,
+            'loginTeachers' => (int) $logins->teachers,
+            'signups' => $expo->scopeToWindows(
+                User::where('role', 'teacher'),
+                'created_at',
+                $windows,
+            )->count(),
+            'applications' => $expo->scopeToWindows(
+                Application::query(),
+                'created_at',
+                $windows,
+            )->count(),
         ];
     }
 
     /**
-     * Logins, distinct teachers, signups and applications per time bucket,
-     * with empty buckets filled so the line has no false gaps.
+     * Logins per time bucket. Signups already emit a login row of their own,
+     * so this single series covers both, exactly as the dashboard claims.
+     *
+     * Buckets are aligned to the organiser's local clock via a fixed-offset
+     * shift, using TIMESTAMPDIFF rather than UNIX_TIMESTAMP so the result is
+     * independent of the database session's own timezone.
      */
-    private function timeSeries(Carbon $since, Carbon $until, string $granularity): array
+    private function loginSeries(ExpoWindow $expo, array $windows, int $bucketMinutes): array
     {
-        $sqlBucket = $granularity === 'hour'
-            ? "DATE_FORMAT(created_at, '%Y-%m-%d %H:00:00')"
-            : 'DATE(created_at)';
+        if (! $windows) {
+            return [];
+        }
 
-        $logins = ActivityLog::where('action', self::LOGIN_ACTION)
-            ->whereBetween('created_at', [$since, $until])
-            ->selectRaw("{$sqlBucket} AS bucket, COUNT(*) AS logins, COUNT(DISTINCT user_id) AS teachers")
-            ->groupBy('bucket')
-            ->get()
-            ->keyBy('bucket');
+        $offset = $expo->now()->getOffset();
+        $size = $bucketMinutes * 60;
 
-        $signups = User::where('role', 'teacher')
-            ->whereBetween('created_at', [$since, $until])
-            ->selectRaw("{$sqlBucket} AS bucket, COUNT(*) AS total")
-            ->groupBy('bucket')
-            ->pluck('total', 'bucket');
+        $expr = "FLOOR((TIMESTAMPDIFF(SECOND, '1970-01-01 00:00:00', created_at) + {$offset}) / {$size})";
 
-        $applications = Application::whereBetween('created_at', [$since, $until])
-            ->selectRaw("{$sqlBucket} AS bucket, COUNT(*) AS total")
+        $rows = $expo->scopeToWindows(
+            ActivityLog::where('action', self::LOGIN_ACTION),
+            'created_at',
+            $windows,
+        )
+            ->selectRaw("{$expr} AS bucket, COUNT(*) AS total")
             ->groupBy('bucket')
             ->pluck('total', 'bucket');
 
         $out = [];
-        $cursor = $granularity === 'hour' ? $since->copy()->startOfHour() : $since->copy()->startOfDay();
-        $guard = 0;
 
-        while ($cursor->lessThanOrEqualTo($until) && $guard++ < 2000) {
-            $key = $granularity === 'hour'
-                ? $cursor->format('Y-m-d H:00:00')
-                : $cursor->format('Y-m-d');
+        foreach ($windows as $window) {
+            $cursor = $this->floorToBucket($window['start'], $bucketMinutes);
+            $guard = 0;
 
-            $row = $logins->get($key);
+            while ($cursor->lessThan($window['end']) && $guard++ < 2000) {
+                $index = (int) floor(($cursor->getTimestamp() + $offset) / $size);
 
-            $out[] = [
-                'bucket' => $key,
-                'label' => $granularity === 'hour' ? $cursor->format('M j g a') : $cursor->format('M j'),
-                'short' => $granularity === 'hour' ? $cursor->format('ga') : $cursor->format('M j'),
-                'logins' => (int) ($row->logins ?? 0),
-                'teachers' => (int) ($row->teachers ?? 0),
-                'signups' => (int) ($signups->get($key) ?? 0),
-                'applications' => (int) ($applications->get($key) ?? 0),
-            ];
+                $out[] = [
+                    'at' => $cursor->copy(),
+                    'label' => $this->bucketLabel($cursor, $bucketMinutes),
+                    'day' => $window['day'] ?? null,
+                    'logins' => (int) ($rows[$index] ?? 0),
+                ];
 
-            $granularity === 'hour' ? $cursor->addHour() : $cursor->addDay();
+                $cursor = $cursor->copy()->addMinutes($bucketMinutes);
+            }
         }
 
         return $out;
     }
 
-    private function hourlyDistribution(Carbon $since, Carbon $until): array
+    private function floorToBucket(Carbon $moment, int $bucketMinutes): Carbon
     {
-        $counts = ActivityLog::where('action', self::LOGIN_ACTION)
-            ->whereBetween('created_at', [$since, $until])
-            ->selectRaw('HOUR(created_at) AS hour, COUNT(*) AS total')
+        $copy = $moment->copy()->seconds(0);
+
+        if ($bucketMinutes >= 60) {
+            return $copy->minutes(0);
+        }
+
+        return $copy->minutes(intdiv($copy->minute, $bucketMinutes) * $bucketMinutes);
+    }
+
+    private function bucketLabel(Carbon $at, int $bucketMinutes): string
+    {
+        return $bucketMinutes >= 60
+            ? $at->format('D g A')
+            : $at->format('g:i A');
+    }
+
+    /**
+     * What time of day teachers arrive, folded onto a single 24-hour clock so
+     * the chart answers "what hour", not "which date".
+     *
+     * The hour is derived with a fixed-offset shift rather than the database's
+     * own timezone, keeping it correct regardless of server configuration.
+     */
+    private function timeOfDay(ExpoWindow $expo, array $windows): array
+    {
+        $totals = [];
+        for ($h = 0; $h < 24; $h++) {
+            $totals[$h] = [
+                'label' => Carbon::createFromTime($h)->format('ga'),
+                'total' => 0,
+            ];
+        }
+
+        if (! $windows) {
+            return array_values($totals);
+        }
+
+        $offset = $expo->now()->getOffset();
+
+        $expr = "MOD(FLOOR((TIMESTAMPDIFF(SECOND, '1970-01-01 00:00:00', created_at) + {$offset}) / 3600), 24)";
+
+        $rows = $expo->scopeToWindows(
+            ActivityLog::where('action', self::LOGIN_ACTION),
+            'created_at',
+            $windows,
+        )
+            ->selectRaw("{$expr} AS hour, COUNT(*) AS total")
             ->groupBy('hour')
             ->pluck('total', 'hour');
 
-        return collect(range(0, 23))
-            ->map(fn (int $hour) => [
-                'hour' => $hour,
-                'label' => Carbon::createFromTime($hour)->format('ga'),
-                'total' => (int) ($counts->get($hour) ?? 0),
-            ])
-            ->all();
-    }
-
-    private function periodTotals(Carbon $since, Carbon $until): array
-    {
-        $logins = ActivityLog::where('action', self::LOGIN_ACTION)
-            ->whereBetween('created_at', [$since, $until])
-            ->selectRaw('COUNT(*) AS logins, COUNT(DISTINCT user_id) AS teachers')
-            ->first();
-
-        return [
-            'logins' => (int) $logins->logins,
-            'teachers' => (int) $logins->teachers,
-            'signups' => User::where('role', 'teacher')->whereBetween('created_at', [$since, $until])->count(),
-            'applications' => Application::whereBetween('created_at', [$since, $until])->count(),
-        ];
-    }
-
-    /**
-     * Every action type recorded in the window — not just teacher ones — so
-     * the older setup-period entries are visible rather than filtered away.
-     */
-    private function activityByType(Carbon $since, Carbon $until): array
-    {
-        return ActivityLog::whereBetween('created_at', [$since, $until])
-            ->selectRaw('action, COUNT(*) AS total, MAX(created_at) AS latest')
-            ->groupBy('action')
-            ->orderByDesc('total')
-            ->get()
-            ->map(fn ($r) => [
-                'action' => $r->action,
-                'label' => ucfirst(str_replace(['.', '_'], [' · ', ' '], $r->action)),
-                'total' => (int) $r->total,
-                'latest' => Carbon::parse($r->latest),
-            ])
-            ->all();
-    }
-
-    /**
-     * What was already on record before the doors opened, so the expo numbers
-     * are never mistaken for the site's whole history.
-     */
-    private function preExpoSummary(ExpoWindow $expo): ?array
-    {
-        if (! $expo->isConfigured()) {
-            return null;
+        foreach ($rows as $hour => $total) {
+            $hour = (int) $hour;
+            if (isset($totals[$hour])) {
+                $totals[$hour]['total'] = (int) $total;
+            }
         }
 
-        $logs = ActivityLog::where('created_at', '<', $expo->start)->count();
-
-        if ($logs === 0) {
-            return null;
-        }
-
-        return [
-            'logs' => $logs,
-            'teachers' => User::where('role', 'teacher')->where('created_at', '<', $expo->start)->count(),
-            'schools' => User::where('role', 'school')->where('created_at', '<', $expo->start)->count(),
-            'firstAt' => Carbon::parse(ActivityLog::min('created_at')),
-        ];
+        return array_values($totals);
     }
 
     private function topTeachers()
     {
-        // select() must come before withCount() — it replaces the select list,
-        // and would otherwise drop the count subquery column.
         return Teacher::query()
             ->join('users', 'users.id', '=', 'teachers.user_id')
             ->select('teachers.*')
@@ -360,7 +418,46 @@ class TeacherActivityController extends Controller
     {
         return ActivityLog::with('user:id,name,email')
             ->latest()
-            ->limit(15)
+            ->limit(12)
             ->get();
+    }
+
+    /**
+     * Positive, share-ready totals for the whole expo so far. Everything here
+     * is a real count — nothing is projected or rounded up.
+     */
+    private function highlights(ExpoWindow $expo): array
+    {
+        $windows = $expo->elapsedSessions();
+
+        $logins = $expo->scopeToWindows(
+            ActivityLog::where('action', self::LOGIN_ACTION),
+            'created_at',
+            $windows,
+        )->selectRaw('COUNT(*) AS total, COUNT(DISTINCT user_id) AS teachers')->first();
+
+        $timeOfDay = $this->timeOfDay($expo, $windows);
+        $peak = collect($timeOfDay)->sortByDesc('total')->first();
+
+        return [
+            'teachers' => User::where('role', 'teacher')->count(),
+            'signups' => $expo->scopeToWindows(
+                User::where('role', 'teacher'),
+                'created_at',
+                $windows,
+            )->count(),
+            'logins' => (int) $logins->total,
+            'activeTeachers' => (int) $logins->teachers,
+            'applications' => $expo->scopeToWindows(
+                Application::query(),
+                'created_at',
+                $windows,
+            )->count(),
+            'schools' => School::where('is_published', true)->where('status', 'active')->count(),
+            'hoursLive' => round($expo->elapsedMinutes() / 60, 1),
+            'peakLabel' => $peak && $peak['total'] > 0 ? $peak['label'] : null,
+            'peakCount' => $peak['total'] ?? 0,
+            'series' => collect($timeOfDay)->pluck('total')->all(),
+        ];
     }
 }

@@ -13,7 +13,7 @@ class TrackLastSeen
      * window, not one per request — the point is a cheap online/offline
      * signal, not precise per-request timing.
      */
-    private const THROTTLE_MINUTES = 5;
+    private const THROTTLE_MINUTES = 1;
 
     public function handle(Request $request, Closure $next): Response
     {

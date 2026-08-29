@@ -260,16 +260,25 @@
                     </svg>
                     Expo Schedule
                 </h3>
-                <p class="mt-1 text-xs text-indigo-700/70">Defines the event window that the Teacher Activity dashboard reports against.</p>
+                <p class="mt-1 text-xs text-indigo-700/70">Defines the event window the Teacher Activity dashboard reports against. The expo runs round the clock — each day counts as a full 24 hours.</p>
 
                 <div class="mt-5 grid gap-5 sm:grid-cols-2">
+                    <div class="sm:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700">Timezone</label>
+                        <p class="text-xs text-gray-400">Every date and time across the admin area is shown in this zone.</p>
+                        @php $currentTz = old('expo_timezone', $settings['expo_timezone'] ?? 'Asia/Kuala_Lumpur'); @endphp
+                        <select name="expo_timezone" class="mt-2 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            @foreach (timezone_identifiers_list() as $tz)
+                                <option value="{{ $tz }}" @selected($currentTz === $tz)>{{ $tz }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Expo starts at</label>
-                        <p class="text-xs text-gray-400">In your own local time.</p>
-                        <input type="datetime-local" id="expo_starts_at_local" data-utc-source="expo_starts_at_hidden"
+                        <label class="block text-sm font-medium text-gray-700">First day</label>
+                        <p class="text-xs text-gray-400">The expo's opening date.</p>
+                        <input type="date" name="expo_start_date"
+                               value="{{ old('expo_start_date', $settings['expo_start_date'] ?? '') }}"
                                class="mt-2 w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                        <input type="hidden" name="expo_starts_at" id="expo_starts_at_hidden"
-                               value="{{ old('expo_starts_at', $settings['expo_starts_at'] ?? '') }}">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Duration (days)</label>
@@ -332,7 +341,6 @@
                     // instant, and is seeded back from it on load.
                     const pairs = [
                         ['dev_mode_ends_at_local', 'dev_mode_ends_at_hidden'],
-                        ['expo_starts_at_local', 'expo_starts_at_hidden'],
                     ];
 
                     pairs.forEach(([localId, hiddenId]) => {
